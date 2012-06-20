@@ -1,0 +1,24 @@
+Ваш заказ № {{ qrid }}
+Тип полиграфии: {{qrtype}}
+Цветность: {{ qrchroma }}
+Формат листа: {{ qrlist_format }}
+Размеры листа:
+ - ширина: {{qrw_list}}
+ - высота: {{qrh_list}}
+Плотность бумаги: {{qrpaper}}
+Тираж: {{qrquant}}
+Размер макета:
+ - Ширина: {{qrwidth}}
+ - Высота: {{qrheight}}
+Количество листов: {{ qrnumber_of_lists }}
+Количество на лист: {{ qron_paper}}
+Количество изделий итого: {{ qrfinally_production }}
+Количество резов: {{ qrslices}}
+Стоимость печати: {{ qrprint_cost }} грн.
+Стоимость подрезки: {{ qrslice_cost }} грн.
+Биговка: {{ qrbig_align }}
+Количество бигов: {{ qrbig_count }}
+Стоимость биговки: {{ qrbig_cost }}  грн.
+Ламинация: {{ qrlamin_name }}
+Стоимость ламинации: {{ qrlamin_cost }} грн
+Итоговая Сума: {{qrorder_cost}} грн.

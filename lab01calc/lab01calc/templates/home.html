@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_class %}home-page{% endblock %}
+
+{% block content %}
+    <!-- форма ввода логина и пароля -->
+
+    {% if is_log %}
+    <form action="logout" method="post">{% csrf_token %}
+        <input type="submit" class="btn" value="выйти">
+    {% else %}
+        <a data-toggle="modal" href="#login" ><i class="icon-off"></i></a>
+    {% endif %}
+
+    <div id="block">
+
+    </div>
+<div id="order"></div>
+
+    <div id="result" {% if not is_log %} style="display: none" {% endif %}>
+
+    </div>
+
+    <!-- Блок ввода параметров заказа -->
+    <script type="text/template" id="start">
+        <div class="start block">
+            <form action="" method="get" class="form-horizontal" name="start">
+
+                <div class="control-group">
+                    <label class="control-label" for="formats-block">Стандартные форматы:</label>
+                    <div class="controls">
+                        <div class="btn-group" id="formats-block">Загрузка...</div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="width">Ширина изделия:</label>
+                    <div class="controls">
+                        <div class="input-append">
+                            <input class="num span2" type="text" name="width" id="width" value="100">
+                            <span class="add-on">мм.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="height">Висота изделия:</label>
+                    <div class="controls">
+                        <div class="input-append">
+                            <input class="num span2" type="text" name="height" id="height" value="200">
+                            <span class="add-on">мм.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="quant">Тираж:</label>
+                    <div class="controls">
+                        <input class="num" type="text" name="quant" id="quant" value="100">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="time">Время на выполнение заказа:</label>
+                    <div class="controls">
+                        <div class="input-append">
+                            <input class="num span2" type="text" name="time" id="time" value="2">
+                            <span class="add-on">дней</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="chroma">Цветность:</label>
+                    <div class="controls">
+                        <select class="num" name="chroma" id="chroma">
+                            <option value="10">1+0</option>
+                            <option value="11">1+1</option>
+                            <option value="40" selected="selected">4+0</option>
+                            <option value="44">4+4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="papers-block">Выберите бумагу:</label>
+                    <div class="controls">
+                        <select name="param_value" id="papers-block">
+                            <option value="">Loading</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Опции раскладки:</label>
+                    <div class="controls">
+                        <label class="checkbox inline" for="print_option1">
+                            <input type="checkbox" name="add_trim" id="print_option1" value="add_trim">Подрезку не учитывать
+                        </label>
+                        <label class="checkbox inline" for="print_option2">
+                            <input type="checkbox" name="add_print_area" id="print_option2" value="add_print_area">Запечатка без вылетов
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Постпечатная обработка:</label>
+                    <div class="controls">
+                        <label class="checkbox inline" for="add_lamin">
+                            <input type="checkbox" name="add_lamin" id="add_lamin" value="add_lamin">Ламинация
+                        </label>
+                        <label class="checkbox inline" for="add_big">
+                            <input type="checkbox" name="add_big" id="add_big" value="add_big">Биговка
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group" id="lamins">
+                    <label class="control-label" for="lamins-block">Выберите ламинацию:</label>
+                    <div class="controls">
+                        <select name="lamin_name" id="lamins-block">
+                            <option value="">Loading</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div id="bigs">
+                <div class="control-group">
+                    <label class="control-label">Количество бигов:</label>
+                    <div class="controls">
+                        <label class="radio inline" for="big1">
+                            <input type="radio" name="big_count" id="big1" value="1" checked>1
+                        </label>
+                        <label class="radio inline" for="big2">
+                            <input type="radio" name="big_count" id="big2" value="2">2
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Положение бига:</label>
+                    <div class="controls">
+                        <label class="radio inline" for="bigh">
+                            <input type="radio" name="big_align" id="bigh" value="horizontal" checked>Горизонтально
+                        </label>
+                        <label class="radio inline" for="bigv">
+                            <input type="radio" name="big_align" id="bigv" value="vertical">Вертикально
+                        </label>
+                    </div>
+                </div>
+                </div>
+                <div id="alert"></div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="send" data-loading-text="Загрузка">Посчитать</button>
+                </div>
+            </form>
+        </div>
+    </script>
+
+
+    <!-- Блок ошибки -->
+    <script type="text/template" id="error">
+        <div class="error">
+            Ошибка. Пользователь не найден.
+            <a href="#!/">Go back</a>
+        </div>
+    </script>
+
+
+    <!-- Блок информации
+    <script type="text/template" id="info">
+        <div class="alert alert-info">
+            <strong>Итоговая цена печати:</strong> <%= order_cost %> грн.</br>
+            <div class="control-group">
+                <label class="control-label" for="email">Ваш емейл:</label>
+                <div class="controls">
+                    <div class="input-append">
+                        <input type="text" name="time" id="email" class="input-medium">
+                        <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
+                    </div>
+                </div>
+            </div>
+            <div id="fileUpload"></div>
+
+
+            <!-- <div class="control-group">
+                <label class="control-label" for="fileInput">Загрузить макет</label>
+                <div class="controls">
+                    <input class="input-file" id="fileInput" type="file">
+                </div>
+            </div>
+
+        </div>
+    </script> -->
+
+    <!-- Блок информации -->
+    <script type="text/template" id="template-order">
+        <div class="order block">
+            <dl class="text-block">
+                <dt>Ширина готового изделия:</dt>
+                <dd><%= width %> мм</dd>
+                <dt>Высота готового изделия:</dt>
+                <dd><%= width %> мм</dd>
+                <dt>Тираж изделия:</dt>
+                <dd><%= quant %> штук</dd>
+                <dt>Время на выполение заказа:</dt>
+                <dd><%= time %> дней</dd>
+                <dt>Цветность:</dt>
+                <dd><%= chroma %></dd>
+                <dt>Плотность бумаги:</dt>
+                <dd><%= param_value %> г/м2</dd>
+                <br>
+                <dt>Итоговая цена печати:</dt>
+                <dd><%= order_cost %> грн.</dd>
+            </dl>
+            <div class="control-group">
+                <label class="control-label" for="email">Ваш емейл:</label>
+                <div class="controls">
+                    <div class="input-append">
+                        <input type="text" name="time" id="email" class="input-medium">
+                        <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
+                    </div>
+                </div>
+            </div>
+            <div id="fileUpload"></div>
+
+
+            <!-- <div class="control-group">
+                <label class="control-label" for="fileInput">Загрузить макет</label>
+                <div class="controls">
+                    <input class="input-file" id="fileInput" type="file">
+                </div>
+            </div>-->
+
+        </div>
+    </script>
+<!--<%  var uploader = new qq.FileUploader({%>
+    <%     // pass the dom node (ex. $(selector)[0] for jQuery users)%>
+    <%     element: $('#fileUpload')[0],%>
+    <%     // path to server-side upload script%>
+    <%     action: '/ajax_upload/',%>
+    <%     debug: true,%>
+    <%     params: {%>
+    <%     'csrf_token': '{{ csrf_token }}',%>
+    <%     'csrf_name': 'csrfmiddlewaretoken',%>
+    <%     'csrf_xname': 'X-CSRFToken',%>
+    <%     }%>
+    <%     });%>
+
+<!-- Блок вывода опций -->
+    <script type="text/template" id="template-papers-block">
+        <% _.each(models, function(paper){ %>
+        <option id="paper<%= paper.param_value %>" value="<%= paper.param_value %>"><%= paper.param_name %></option>
+        <% }); %>
+    </script>
+
+    <!-- Блок вывода опций -->
+    <script type="text/template" id="template-lamins-block">
+        <% _.each(models, function(lamin){ %>
+        <option id="lamin<%= lamin.lamin_name %>" value="<%= lamin.lamin_name %>"><%= lamin.lamin_label %></option>
+        <% }); %>
+    </script>
+
+    <!-- Блок вывода форматов -->
+    <script type="text/template" id="template-formats-block">
+        <% _.each(models, function(format){ %>
+        <button class="btn btn-info select-format" data-width="<%= format.width %>" data-height="<%= format.height %>"><%= format.name %></button>
+        <% }); %>
+    </script>
+
+    <!-- Блок удачи -->
+    <script type="text/template" id="success">
+        <div class="success">
+            <!--Пользователь  найден.-->
+            <a href="#!/">Go back</a>
+        </div>
+    </script>
+
+    <!-- Выбор бумаги -->
+    <script type="text/template" id="paper-choose">
+        <div class="price-choose modal form-horizontal">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Имя</th>
+                    <th>Плотность</th>
+                    <th>Цена</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% _.each(papers,function(paper){ %>
+                <tr>
+                    <td><%= paper.name %></td>
+                    <td><%= paper.cost %></td>
+                    <td><%= paper.density %></td>
+                    <td></td>
+                </tr>
+                <% }); %>
+                <tr>
+                    <td><input type="radio" name="selectPaper" value="0.26"></td>
+                    <td>Меловка</td>
+                    <td>80</td>
+                    <td>0.26</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="selectPaper" value="0.34"></td>
+                    <td>Матовая</td>
+                    <td>100</td>
+                    <td>0.34</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-actions">
+                <button class="btn btn-primary" id="send-paper" data-loading-text="Загрузка">Посчитать</button>
+                <a class="btn" href="#!/">Назад</a>
+            </div>
+            <!--Пользователь найден.-->
+
+        </div>
+    </script>
+    <!--Блок вывода модуля  -->
+    <script type="text/template" id="print">
+        <div class="print block">
+            <div class="row-fluid">
+                <div class="span5">
+                    <div id="layout"></div>
+                </div>
+                <div class="span7">
+                    <!-- <h2>Тип полиграфии: <%= type %></h2>-->
+                    <dl class="text-block">
+                        <dt>Плотность бумаги:</dt>
+                        <dd><%= param_value %> г/м2</dd>
+                        <dt>Размер листа:</dt>
+                        <dd><%= wid_a3 %>x<%= hei_a3 %> мм</dd>
+                        <dt>Количество листов:</dt>
+                        <dd><%= number_of_lists %> штук</dd>
+                        <br>
+                        <dt>Количество на лист:</dt>
+                        <dd><%= On_paper %></dd>
+                        <br>
+                        <dt>Количество резов на лист:</dt>
+                        <dd><%= slices %></dd>
+                        <dt>Ширина изделия:</dt>
+                        <dd><%= width %> <b>мм</b></dd>
+                        <dt>Высота изделия:</dt>
+                        <dd><%= height %> <b>мм</b></dd>
+
+
+                        <dt>Итого изделий:</dt>
+                        <dd><%= finally_production %></dd>
+                        <br>
+                        <dt>Стоимость печати:</dt>
+                        <dd><%= print_cost %> грн.</dd>
+                        <% if (_.isNumber(big_cost)){ %>
+                        <dt>Стоимость беговки:</dt>
+                        <dd><%= big_cost %> грн.</dd>
+                        <% } %>
+                        <% if (_.isNumber(lamin_cost)){ %>
+                        <dt>Стоимость ламинации:</dt>
+                        <dd><%= lamin_cost %> грн.</dd>
+                        <% } %>
+
+                        <dt>Стоимость подрезки:</dt>
+                        <dd><%= slice_cost %> грн.</dd>
+                        <dt>Итоговая стоимость:</dt>
+                        <dd><%= order_cost %> грн.</dd>
+
+                        <dt>Отход:</dt>
+                        <dd><b><%= Out %> %</b></dd>
+
+
+
+
+
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </script>
+<!--/*
+<% _.each(this,function(item,key,list){ %>
+                <dt>
+                    <%= key %>
+                </dt>
+                <dd>
+                    <%= item %>
+                </dd>
+                <% });%>
+            */-->
+
+<div class="modal hide" id="login">
+    <div class="modal-body">
+    {% if form.errors %}
+    <p class="error">Вы неправильно ввели логин или пароль</p>
+    {% endif %}
+    <form action="login" method='post'>{% csrf_token %}
+        <label for="username">Логин:</label>
+        <input type="text" name="username" value="" id="username">
+        <label for="password">Пароль:</label>
+        <input type="password" name="password" value="" id="password">
+
+        <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Войти" />
+        <input type="hidden" name="next" value="{{ next|escape }}" />
+        </div>
+    </form>
+    </div>
+</div>
+{% endblock %}

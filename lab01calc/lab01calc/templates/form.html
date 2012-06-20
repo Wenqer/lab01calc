@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<form action="ajax_upload/" method="post">{% csrf_token %}
+    <input type = 'file'>
+    <input type="submit" value=" send ">
+{{ is_log }}
+</form>
+</body>
+</html>

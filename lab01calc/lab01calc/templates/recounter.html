@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_class %}home-page{% endblock %}
+
+
+{% block content %}
+    <form action="" method="get" class="form-horizontal modal well" name="recount">
+        <div class="control-group">
+            <label class="control-label" for="width">Ширина:</label>
+            <div class="controls">
+                <input type="text" name="width" id="width">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="height">Висота:</label>
+            <div class="controls">
+                <input type="text" name="height" id="height">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="quant">Тираж:</label>
+            <div class="controls">
+                <input type="text" name="quant" id="quant">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="list_width">Ширина листа:</label>
+            <div class="controls">
+                <input type="text" name="list_width" id="list_width">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="list_height">Высота листа:</label>
+            <div class="controls">
+                <input type="text" name="list_height" id="list_height">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="send" data-loading-text="Загрузка">Посчитать</button>
+        </div>
+        <div id="result"></div>
+    </form>
+{% endblock content %}
