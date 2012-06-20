@@ -487,7 +487,7 @@ var ShowOrder = Backbone.View.extend({
 		e.preventDefault();
 
 		var order = this.model.toJSON(),
-			append = { email: $("#email").val(), file: $("#fileInput").val()},
+			append = { email: $("#email").val(), file: $(".qq-upload-file").html()},
 			$el = $(this.el);
 
 		_.extend(order,append);
@@ -513,14 +513,25 @@ var ShowOrder = Backbone.View.extend({
 		$(this.el).html(this.template(
 			this.model.toJSON()
 		));
+
 		var uploader = new qq.FileUploader({
-			// pass the dom node (ex. $(selector)[0] for jQuery users)
+			action: uploadUrl,
 			element: $('#fileUpload')[0],
-			// path to server-side upload script
-			action: '/ajax_upload/',
-			debug: true,
+			multiple: true,
+			onComplete: function(id, fileName, responseJSON) {
+				if(responseJSON.success) {
+					app.log("success!");
+				} else {
+					app.log("upload failed!");
+				}
+			},
+			onAllComplete: function(uploads) {
+				// uploads is an array of maps
+				// the maps look like this: {file: FileObject, response: JSONServerResponse}
+				app.log("All complete!");
+			},
 			params: {
-				'csrf_token': djangotoken,
+				'csrf_token': djangoToken,
 				'csrf_name': 'csrfmiddlewaretoken',
 				'csrf_xname': 'X-CSRFToken'
 			}

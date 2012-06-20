@@ -323,6 +323,8 @@ def add_order(request):
             dd = dt.strftime(format)
             add_lamin = request.GET['add_lamin'] # get using lamin or not
             add_big = request.GET['add_big'] # same for bigovka
+            file = request.GET['file']
+            filepath = "/home/lab01/webapps/lab01calc/lab01calc/public/static/uploads/" + file
             # sends to db different params (with or without lamination and bigovka)
             # with bigovka and lamination
             if ('big_cost' and 'big_align' and 'big_count' and 'lamin_cost' and 'lamin_name' in request.GET and request.GET['big_cost'] and request.GET['big_align'] and request.GET['big_count'] and request.GET['lamin_cost'] and request.GET['lamin_name']) and (add_lamin == 'true' and add_big == 'true'):
@@ -420,6 +422,8 @@ def add_order(request):
                 qrtype = qr.type
             ident = request.GET['param_value']
             qrpaper = Paper_params.objects.get(param_value = ident).param_name
+            from django.conf import  settings
+            MEDIA_URL = settings.MEDIA_URL
             # mail to lab01
             plaintext = get_template('email_order.txt')
             htmly     = get_template('email_order.html')
@@ -428,13 +432,13 @@ def add_order(request):
             text_content = plaintext.render(rendr)
             html_content = htmly.render(rendr)
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-            msg.attach_file('/home/lab01/webapps/lab01calc/lab01calc/public/Temp/working.txt')
+            msg.attach_file(filepath)
             msg.attach_alternative(html_content, "text/html")
             msg.send()
             # mail to замовник
             plaintext = get_template('email.txt')
             htmly     = get_template('email.html')
-            rendr = Context({"qrid" : qrid, "qrpaper" : qrpaper, "qrdate" : qrdate, "qremail" : qremail, "qrlist_format": qrlist_format, "qrslices":qrslices, "qrprint_cost":qrprint_cost, "qrslice_cost":qrslice_cost, "qron_paper":qron_paper, "qrchroma":qrchroma, "qrfinally_production":qrfinally_production, "qrw_list":qrw_list, "qrh_list":qrh_list, "qrwidth":qrwidth, "qrheight":qrheight, "qrnumber_of_lists":qrnumber_of_lists, "qrquant":qrquant, "qrtime":qrtime, "qrorder_cost":qrorder_cost, "qrtype":qrtype })
+            rendr = Context({"qrid" : qrid, "qrpaper" : qrpaper, "qrdate" : qrdate, "qremail" : qremail, "qrlist_format": qrlist_format, "qrslices":qrslices, "qrprint_cost":qrprint_cost, "qrslice_cost":qrslice_cost, "qron_paper":qron_paper, "qrchroma":qrchroma, "qrfinally_production":qrfinally_production, "qrw_list":qrw_list, "qrh_list":qrh_list, "qrwidth":qrwidth, "qrheight":qrheight, "qrnumber_of_lists":qrnumber_of_lists, "qrquant":qrquant, "qrtime":qrtime, "qrorder_cost":qrorder_cost, "qrtype":qrtype, "MEDIA_URL":MEDIA_URL })
             subject, from_email, to = 'Новый заказ от полиграфического калькулятора', email_maker, emails
             text_content = plaintext.render(rendr)
             html_content = htmly.render(rendr)

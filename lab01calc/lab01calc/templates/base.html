@@ -40,7 +40,8 @@
     {% if debug %}{% include 'includes/debug.html' %}{% endif %}
     {% block javascript_library %}
     <script type="text/javascript">
-        djangotoken = "{{ csrf_token }}"
+        djangoToken = "{{ csrf_token }}";
+        uploadUrl = "{% url my_ajax_upload %}";
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="{{ MEDIA_URL }}js/libs/underscore.js"></script>
