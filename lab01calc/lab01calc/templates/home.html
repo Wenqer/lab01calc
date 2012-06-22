@@ -5,12 +5,7 @@
 {% block content %}
     <!-- форма ввода логина и пароля -->
 
-    {% if is_log %}
-    <form action="logout" method="post">{% csrf_token %}
-        <input type="submit" class="btn" value="выйти">
-    {% else %}
-        <a data-toggle="modal" href="#login" ><i class="icon-off"></i></a>
-    {% endif %}
+
 
     <div id="block">
 
@@ -23,6 +18,31 @@
 
     <!-- Блок ввода параметров заказа -->
     <script type="text/template" id="start">
+        {% if is_log %}
+        <form action="/" method="post">{% csrf_token %}
+            <input type="hidden" name="action" value="logout">
+            <input type="submit" class="btn" value="выйти">
+            {% else %}
+            <a data-toggle="modal" href="#login" ><i class="icon-off"></i></a>
+            {% endif %}
+        <div class="modal hide" id="login">
+            <div class="modal-body">
+            {% if form.errors %}
+                <p class="error">Вы неправильно ввели логин или пароль</p>
+            {% endif %}
+            <form action="/" method='post'>{% csrf_token %}
+                <label for="username">Логин:</label>
+                <input type="text" name="username" value="" id="username">
+                <label for="password">Пароль:</label>
+                <input type="password" name="password" value="" id="password">
+                <input type="hidden" name="action" value="login">
+                <div class="form-actions">
+                    <input type="submit" class="btn btn-primary" value="Войти" id="login-btn" />
+                    <input type="hidden" name="next" value="{{ next|escape }}" />
+                </div>
+            </form>
+            </div>
+        </div>
         <div class="start block">
             <form action="" method="get" class="form-horizontal" name="start">
 
@@ -152,7 +172,7 @@
                 <div id="alert"></div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="send" data-loading-text="Загрузка">Посчитать</button>
+                    <button type="submit" class="mbtn" id="send" data-loading-text="Загрузка">Посчитать</button>
                 </div>
             </form>
         </div>
@@ -198,21 +218,25 @@
     <script type="text/template" id="template-order">
         <div class="order block">
             <dl class="text-block">
-                <dt>Ширина готового изделия:</dt>
-                <dd><%= width %> мм</dd>
-                <dt>Высота готового изделия:</dt>
-                <dd><%= width %> мм</dd>
-                <dt>Тираж изделия:</dt>
-                <dd><%= quant %> штук</dd>
-                <dt>Время на выполение заказа:</dt>
-                <dd><%= time %> дней</dd>
-                <dt>Цветность:</dt>
-                <dd><%= chroma %></dd>
-                <dt>Плотность бумаги:</dt>
-                <dd><%= param_value %> г/м2</dd>
+                <dt><h2>Тип печати:</h2></dt>
+                <dd><h2 class="title"><%= type_label %></h2></dd>
                 <br>
-                <dt>Итоговая цена печати:</dt>
-                <dd><%= order_cost %> грн.</dd>
+                <dt>Ширина готового изделия:</dt>
+                <dd class="title"><%= width %> мм</dd>
+                <dt>Высота готового изделия:</dt>
+                <dd class="title"><%= height %> мм</dd>
+                <dt>Тираж изделия:</dt>
+                <dd class="title"><%= quant %> штук</dd>
+                <dt>Время на выполение заказа:</dt>
+                <dd class="title"><%= time %> дней</dd>
+                <dt>Цветность:</dt>
+                <dd class="title"><%= chroma %></dd>
+                <dt>Плотность бумаги:</dt>
+                <dd class="title"><%= param_value %> г/м2</dd>
+                <hr class="divinder">
+                <br>
+                <dt class="title">Итоговая цена печати:</dt>
+                <dd class="title"><span class="warm"><%= order_cost %> грн</span></dd>
             </dl>
             <div class="control-group">
                 <label class="control-label" for="email">Ваш емейл:</label>
@@ -390,22 +414,5 @@
                 <% });%>
             */-->
 
-<div class="modal hide" id="login">
-    <div class="modal-body">
-    {% if form.errors %}
-    <p class="error">Вы неправильно ввели логин или пароль</p>
-    {% endif %}
-    <form action="login" method='post'>{% csrf_token %}
-        <label for="username">Логин:</label>
-        <input type="text" name="username" value="" id="username">
-        <label for="password">Пароль:</label>
-        <input type="password" name="password" value="" id="password">
 
-        <div class="form-actions">
-        <input type="submit" class="btn btn-primary" value="Войти" />
-        <input type="hidden" name="next" value="{{ next|escape }}" />
-        </div>
-    </form>
-    </div>
-</div>
 {% endblock %}

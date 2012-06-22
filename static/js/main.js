@@ -14,6 +14,7 @@ app = {
 var Order = Backbone.Model.extend({
 	defaults: {
 		type: "simple",
+		type_label: "",
 		//базовые параметры
 		width: "", //ширина изделия
 		height: "", //высота изделия
@@ -76,13 +77,13 @@ var Formats = Backbone.Collection.extend({//Набор форматов
 	}
 });
 
+
 var Paper = Backbone.Model.extend({//Модель бумаги
 	defaults:{
 		param_name: "", //имя плотности
 		param_value: "" //значение плотности
 	}
 });
-
 
 var Papers = Backbone.Collection.extend({// Набор бумаги
 	model: Paper,
@@ -119,11 +120,13 @@ var Lamins = Backbone.Collection.extend({//Набор ламинаций
 	}
 });
 
+
 var AppState = Backbone.Model.extend({
 	defaults: {
 		state: "start"
 	}
 });
+
 
 var ListLamins = Backbone.View.extend({//Вывод ламинаций
 
@@ -141,6 +144,7 @@ var ListLamins = Backbone.View.extend({//Вывод ламинаций
 
 });
 
+
 var ListPapers = Backbone.View.extend({//Вывод бумаги
 
 	template: _.template($('#template-papers-block').html()),
@@ -156,6 +160,7 @@ var ListPapers = Backbone.View.extend({//Вывод бумаги
 	}
 
 });
+
 
 var ListFormats = Backbone.View.extend({//Вывод форматов
 
@@ -194,6 +199,7 @@ var Block = Backbone.View.extend({
 
 	events: {
 		"click #send": "load", // Обработчик клика на кнопке "Проверить"
+		//"click #login-btn": "login", // Обработчик клика на кнопке "Проверить"
 		"click #add_lamin": "load_lamin", //вывод ламинаций
 		"click #add_big": "load_big" //вывод биговок
 	},
@@ -238,6 +244,33 @@ var Block = Backbone.View.extend({
 		app.models.order.set(data);//пишем начлаьные данные в модель заказа
 		app.models.order.trigger("retype");//выясняем тип заказа
 	},
+
+	/*login: function(e){
+		//e.preventDefault();
+
+		var sendData = {
+			action: "login",
+			username: $(this.el).find("#username").val(),
+			password:  $(this.el).find("#password").val(),
+			'csrfmiddlewaretoken': djangoToken
+		};
+
+		$.ajax({
+			url: "/",
+			type: "POST",
+			data: sendData,
+			complete: function(data){
+				app.log(data);
+				var content = $(data).find("div[role='main'] > *");
+				app.log(content);
+				//location.reload();
+				//$("div[role='main']").html(content);
+				$("#login").modal("hide");
+			}
+		})
+
+
+	},*/
 
 	load_lamin: function(){
 		$(this.el).find("#lamins").toggle();
@@ -297,27 +330,45 @@ var Result = Backbone.View.extend({
 		this.model.bind('calc', 	this.calc, this);
 		this.model.bind('retype', 	this.retype, this);
 		this.model.bind('layout', 	this.renderLayout, this);
+		this.model.bind('change:type', this.labelType, this);
 	},
 
 
 	retype: function(){
-		var width 			= app.models.order.get("width"),
-			height 			= app.models.order.get("height"),
+		var width 			= parseInt(app.models.order.get("width")),
+			height 			= parseInt(app.models.order.get("height")),
+			add_print_area	= app.models.order.get("add_print_area"),
+			add_trim  		= app.models.order.get("add_trim"),
 			quant  			= app.models.order.get("quant"),
-			time   			= app.models.order.get("time");
-		var a3={}; a3.width = 297; a3.height = 420;
+			time   			= parseInt(app.models.order.get("time"));
+		var a3={}; a3.width = 305; a3.height = 430;
 		var	a1={}; a1.width = 420; a1.height = 594;
+
+		if (!add_trim){
+			width+=4;
+			height+=4;
+		}
+
+		if (!add_print_area){
+			width+=8;
+			height+=8;
+		}
 
 		// TODO: SUMMARY PRINTING CHECK
 
-		if ((width < a3.width) && (height < a3.height)){// Если изделие меньше А3
+		if ((width <= a3.width) && (height <= a3.height)){// Если изделие меньше А3
 				$.when(app.views.result.resize()).then(function(){ //Делаем пересчёт на выбранный формат
 					quant = app.models.order.get("number_of_lists");
-					if ((quant <=500) && time < 5){//TODO bug with time select
+					if (quant <=500) {
 						app.models.order.set({type: "digit"});// Уходим на цифровую печать
 					}
 					else{
-						app.models.order.set({type: "offset"}); // Уходим на оффсет
+						if (time < 5){
+							app.models.order.set({type: "digit"});// Уходим на цифровую печать
+						}
+						else{
+							app.models.order.set({type: "offset"}); // Уходим на оффсет
+						}
 					}
 					app.models.order.trigger("calc");
 				});
@@ -333,6 +384,27 @@ var Result = Backbone.View.extend({
 			app.models.order.trigger("calc");
 		}
 
+	},
+
+	labelType: function(){
+		var type = this.model.get("type");
+
+		switch(type){
+			case "digit":
+				this.model.set({type_label: "Цифровая"});
+				break;
+
+			case "offset":
+				this.model.set({type_label: "Оффсетная"});
+				break;
+
+			case "wide":
+				this.model.set({type_label: "Широкоформатная"});
+				break;
+
+			default:
+				this.model.set({type_label: "malfunction"});
+		}
 	},
 
 	resize: function(){
@@ -365,6 +437,8 @@ var Result = Backbone.View.extend({
 		var type = this.model.get("type");
 		var that = this;
 		var senddata = {
+			"width": 			this.model.get("width"),
+			"height": 			this.model.get("height"),
 			"param_value": 		this.model.get("param_value"),
 			"number_of_lists": 	this.model.get("number_of_lists"),
 			"quant": 			this.model.get("quant"),
@@ -372,6 +446,8 @@ var Result = Backbone.View.extend({
 			"chroma": 			this.model.get("chroma"),
 			"format": 			this.model.get("format"),
 			"add_lamin": 		this.model.get("add_lamin"),
+			"add_trim": 		this.model.get("add_trim"),
+			"add_print_area": 	this.model.get("add_print_area"),
 			"add_big": 			this.model.get("add_big")
 		};
 
@@ -432,8 +508,10 @@ var Result = Backbone.View.extend({
 				lay.rowB = i*(lay.width +lay.trim)+lay.print+lay.trim;//отрисовка изделия
 				lay.colB = j*(lay.height+lay.trim)+lay.print+lay.trim;
 
-				paper.rect(lay.rowB,lay.colB, lay.width , lay.height).attr({"gradient": "90-#0055cc-#0088cc","stroke-width": 0, "stroke": "#fff"});
-				paper.rect(lay.rowC,lay.colC, lay.width+2*lay.trim, lay.height+2*lay.trim).attr({"stroke-width": 1, "stroke": "#999"});
+				paper.rect(lay.rowB,lay.colB, lay.width , lay.height)
+					 .attr({"gradient": "90-#0055cc-#0088cc","stroke-width": 0, "stroke": "#fff"});
+				paper.rect(lay.rowC,lay.colC, lay.width+2*lay.trim, lay.height+2*lay.trim)
+					 .attr({"stroke-width": 1, "stroke": "#999"});
 				if (lay.big){
 					if (lay.big_align == "horizontal"){
 						if (lay.big_count == 2) {
@@ -477,6 +555,7 @@ var ShowOrder = Backbone.View.extend({
 
 	initialize: function(){
 		this.model.bind("change:order_cost", this.render, this)
+		this.model.bind("change:type_label", this.render, this)
 	},
 
 	events: {
@@ -487,9 +566,10 @@ var ShowOrder = Backbone.View.extend({
 		e.preventDefault();
 
 		var order = this.model.toJSON(),
-			append = { email: $("#email").val(), file: $(".qq-upload-file").html()},
+			append = { email: $("#email").val()},
 			$el = $(this.el);
 
+		$("#status").remove();
 		_.extend(order,append);
 
 		$.ajax({
@@ -513,7 +593,7 @@ var ShowOrder = Backbone.View.extend({
 		$(this.el).html(this.template(
 			this.model.toJSON()
 		));
-
+		that = this;
 		var uploader = new qq.FileUploader({
 			action: uploadUrl,
 			element: $('#fileUpload')[0],
@@ -524,11 +604,13 @@ var ShowOrder = Backbone.View.extend({
 				} else {
 					app.log("upload failed!");
 				}
+				that.model.set({ file: fileName});
 			},
 			onAllComplete: function(uploads) {
 				// uploads is an array of maps
 				// the maps look like this: {file: FileObject, response: JSONServerResponse}
-				app.log("All complete!");
+				//that.model.set
+				app.log("Success");
 			},
 			params: {
 				'csrf_token': djangoToken,
