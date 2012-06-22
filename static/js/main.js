@@ -375,7 +375,7 @@ var Result = Backbone.View.extend({
 
 		}
 		else{//Изделие больше А3
-			if ((width > a3.width) && (height > a3.height) &&(quant <= 100)){
+			if ((width > a1.width) && (height > a1.height) &&(quant <= 100)){
 				app.models.order.set({type: "wide"}); //Уходим на широкоформтаку
 			}
 			else{
@@ -473,14 +473,16 @@ var Result = Backbone.View.extend({
 
 	renderLayout: function(){
 		var lay={};
-		lay.rows   = parseInt(app.models.order.get("rows"));
-		lay.cols   = parseInt(app.models.order.get("cols"));
-		lay.wid_a3 = parseInt(app.models.order.get("wid_a3"));
-		lay.hei_a3 = parseInt(app.models.order.get("hei_a3"));
-		lay.print  = parseInt(app.models.order.get("trim")); //запечатка
-		lay.trim   = parseInt(app.models.order.get("dop")); //подрезка
-		lay.pos    = app.models.order.get("pos");
-		lay.big		= app.models.order.get("add_big");
+		lay.rows   			= parseInt(app.models.order.get("rows"));
+		lay.cols   			= parseInt(app.models.order.get("cols"));
+		lay.wid_a3 			= parseInt(app.models.order.get("wid_a3"));
+		lay.wid_a3_label 	= parseInt(app.models.order.get("wid_a3"));
+		lay.hei_a3 			= parseInt(app.models.order.get("hei_a3"));
+		lay.hei_a3_label 	= parseInt(app.models.order.get("hei_a3"));
+		lay.print 			= parseInt(app.models.order.get("trim")); //запечатка
+		lay.trim   			= parseInt(app.models.order.get("dop")); //подрезка
+		lay.pos    			= app.models.order.get("pos");
+		lay.big				= app.models.order.get("add_big");
 
 		if (lay.pos){
 			lay.width  = parseInt(app.models.order.get("width"));
@@ -495,6 +497,14 @@ var Result = Backbone.View.extend({
 		if (lay.big){
 			lay.big_count = app.models.order.get("big_count");
 			lay.big_align = app.models.order.get("big_align");
+		}
+
+		if (lay.wid_a3 > 225){
+			var k = lay.wid_a3/225;
+			lay.wid_a3 = lay.wid_a3/k;
+			lay.hei_a3 = lay.hei_a3/k;
+			lay.width = lay.width/k;
+			lay.height = lay.height/k;
 		}
 
 		$("#layout").html("");
@@ -531,8 +541,8 @@ var Result = Backbone.View.extend({
 
 			}
 		}
-		paper.text(lay.wid_a3/2, lay.hei_a3+10,lay.wid_a3);
-		paper.text(lay.wid_a3+15,lay.hei_a3/2, lay.hei_a3);
+		paper.text(lay.wid_a3/2, lay.hei_a3+10,lay.wid_a3_label);
+		paper.text(lay.wid_a3+15,lay.hei_a3/2, lay.hei_a3_label);
 		lay.out={layout: paper.toJSON()};
 		app.models.order.set(lay.out);
 		return this;

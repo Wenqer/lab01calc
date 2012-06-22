@@ -22,6 +22,7 @@
         <form action="/" method="post">{% csrf_token %}
             <input type="hidden" name="action" value="logout">
             <input type="submit" class="btn" value="выйти">
+        </form>
             {% else %}
             <a data-toggle="modal" href="#login" ><i class="icon-off"></i></a>
             {% endif %}
@@ -179,41 +180,6 @@
     </script>
 
 
-    <!-- Блок ошибки -->
-    <script type="text/template" id="error">
-        <div class="error">
-            Ошибка. Пользователь не найден.
-            <a href="#!/">Go back</a>
-        </div>
-    </script>
-
-
-    <!-- Блок информации
-    <script type="text/template" id="info">
-        <div class="alert alert-info">
-            <strong>Итоговая цена печати:</strong> <%= order_cost %> грн.</br>
-            <div class="control-group">
-                <label class="control-label" for="email">Ваш емейл:</label>
-                <div class="controls">
-                    <div class="input-append">
-                        <input type="text" name="time" id="email" class="input-medium">
-                        <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
-                    </div>
-                </div>
-            </div>
-            <div id="fileUpload"></div>
-
-
-            <!-- <div class="control-group">
-                <label class="control-label" for="fileInput">Загрузить макет</label>
-                <div class="controls">
-                    <input class="input-file" id="fileInput" type="file">
-                </div>
-            </div>
-
-        </div>
-    </script> -->
-
     <!-- Блок информации -->
     <script type="text/template" id="template-order">
         <div class="order block">
@@ -248,29 +214,9 @@
                 </div>
             </div>
             <div id="fileUpload"></div>
-
-
-            <!-- <div class="control-group">
-                <label class="control-label" for="fileInput">Загрузить макет</label>
-                <div class="controls">
-                    <input class="input-file" id="fileInput" type="file">
-                </div>
-            </div>-->
-
         </div>
     </script>
-<!--<%  var uploader = new qq.FileUploader({%>
-    <%     // pass the dom node (ex. $(selector)[0] for jQuery users)%>
-    <%     element: $('#fileUpload')[0],%>
-    <%     // path to server-side upload script%>
-    <%     action: '/ajax_upload/',%>
-    <%     debug: true,%>
-    <%     params: {%>
-    <%     'csrf_token': '{{ csrf_token }}',%>
-    <%     'csrf_name': 'csrfmiddlewaretoken',%>
-    <%     'csrf_xname': 'X-CSRFToken',%>
-    <%     }%>
-    <%     });%>
+
 
 <!-- Блок вывода опций -->
     <script type="text/template" id="template-papers-block">
@@ -293,58 +239,8 @@
         <% }); %>
     </script>
 
-    <!-- Блок удачи -->
-    <script type="text/template" id="success">
-        <div class="success">
-            <!--Пользователь  найден.-->
-            <a href="#!/">Go back</a>
-        </div>
-    </script>
 
-    <!-- Выбор бумаги -->
-    <script type="text/template" id="paper-choose">
-        <div class="price-choose modal form-horizontal">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Имя</th>
-                    <th>Плотность</th>
-                    <th>Цена</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% _.each(papers,function(paper){ %>
-                <tr>
-                    <td><%= paper.name %></td>
-                    <td><%= paper.cost %></td>
-                    <td><%= paper.density %></td>
-                    <td></td>
-                </tr>
-                <% }); %>
-                <tr>
-                    <td><input type="radio" name="selectPaper" value="0.26"></td>
-                    <td>Меловка</td>
-                    <td>80</td>
-                    <td>0.26</td>
-                </tr>
-                <tr>
-                    <td><input type="radio" name="selectPaper" value="0.34"></td>
-                    <td>Матовая</td>
-                    <td>100</td>
-                    <td>0.34</td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="form-actions">
-                <button class="btn btn-primary" id="send-paper" data-loading-text="Загрузка">Посчитать</button>
-                <a class="btn" href="#!/">Назад</a>
-            </div>
-            <!--Пользователь найден.-->
-
-        </div>
-    </script>
-    <!--Блок вывода модуля  -->
+    <!--Блок вывода заказа для админа  -->
     <script type="text/template" id="print">
         <div class="print block">
             <div class="row-fluid">
@@ -386,8 +282,10 @@
                         <dd><%= lamin_cost %> грн.</dd>
                         <% } %>
 
+                        <% if (_.isNumber(slice_cost)) { %>
                         <dt>Стоимость подрезки:</dt>
                         <dd><%= slice_cost %> грн.</dd>
+                        <% } %>
                         <dt>Итоговая стоимость:</dt>
                         <dd><%= order_cost %> грн.</dd>
 
@@ -403,16 +301,4 @@
             </div>
         </div>
     </script>
-<!--/*
-<% _.each(this,function(item,key,list){ %>
-                <dt>
-                    <%= key %>
-                </dt>
-                <dd>
-                    <%= item %>
-                </dd>
-                <% });%>
-            */-->
-
-
 {% endblock %}
