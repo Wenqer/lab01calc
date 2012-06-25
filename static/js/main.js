@@ -21,6 +21,7 @@ var Order = Backbone.Model.extend({
 		quant: "", //тираж
 		time: "", //время на выполнение заказа
 		chroma: "", //цветность
+		chroma_label: "", //имя цветности
 		param_value: "", //атрибуты бумаги(имя, плотность)
 		add_trim: "true",
 		add_print_area: "true",
@@ -47,6 +48,7 @@ var Order = Backbone.Model.extend({
 		//параметры при просчёте
 		layout: "", //расскладка на лист
 		print_cost: "", //цена печати
+		product_cost: "", //цена изделия
 		slice_cost: "", //цена подрезки
 		big_cost: "", //цена беговки
 		lamin_cost: "", //цена ламинации
@@ -99,6 +101,18 @@ var Papers = Backbone.Collection.extend({// Набор бумаги
 	}
 });
 
+var Chroma = Backbone.Model.extend({
+	defaults:{
+		chroma: "",
+		chroma_label: ""
+	}
+});
+
+var Chromas = Backbone.Collection.extend({
+	model: Chroma,
+	id: "chromas-block"
+
+});
 
 var Lamin = Backbone.Model.extend({//Модель ламинации
 	defaults:{
@@ -161,6 +175,25 @@ var ListPapers = Backbone.View.extend({//Вывод бумаги
 
 });
 
+var ListChromas = Backbone.View.extend({//Вывод бумаги
+
+	template: _.template($('#template-chromas-block').html()),
+
+	initialize: function(){
+		this.collection.bind('change', this.render, this);
+		this.render();
+	},
+
+	render: function(){
+		$(this.el).html(this.template({
+			models: this.collection.toJSON()
+		}));
+		$("#chroma40").attr("checked", true);
+		return this
+	}
+
+});
+
 
 var ListFormats = Backbone.View.extend({//Вывод форматов
 
@@ -206,7 +239,8 @@ var Block = Backbone.View.extend({
 
 	initialize: function () { // Подписка на событие модели
 		this.model.bind('change', this.render, this);
-		app.models.order.bind('change:param_value', this.swapPaper, this);
+		app.models.order.bind('change:format', this.swapPaper, this);
+
 	},
 
 	load: function (e) {
@@ -289,15 +323,17 @@ var Block = Backbone.View.extend({
 			$a3 = $(this.el).find("#paper100"),
 			$paper = $(this.el).find("#papers-block"),
 			format = app.models.order.get("format");
-
+		//app.log(format);
 		if ($paper.val() == "80" && (format=="A3" || format=="A3p")){
 			$paper.closest(".control-group").addClass("warning");
+			//app.log(80);
 			$paper.after("<span class='help-block'>Эта бумага не доступна для А3, просчёт выполнен на 100</span>");
 			app.models.order.set({param_value: 100}, {silent: true});
 			return false
 		}
 
 		if ($paper.val() == "100" && (format=="A4" || format=="A4p")){
+			//app.log(100);
 			$paper.closest(".control-group").addClass("warning");
 			$paper.after("<span class='help-block'>Эта бумага не доступна для А4, просчёт выполнен на 80</span>");
 			app.models.order.set({param_value: 80}, {silent: true});
@@ -308,6 +344,7 @@ var Block = Backbone.View.extend({
 	render: function () {
 		var state = this.model.get("state");
 		$(this.el).html(this.template(this.model.toJSON()));
+		this.chromas 	= new ListChromas({el: this.$("#" + app.cols.chromas.id), collection: app.cols.chromas});
 		this.lamins 	= new ListLamins({el: this.$("#" + app.cols.lamins.id), collection: app.cols.lamins});
 		this.papers 	= new ListPapers({el: this.$("#" + app.cols.papers.id), collection: app.cols.papers});
 		this.formats 	= new ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
@@ -328,9 +365,11 @@ var Result = Backbone.View.extend({
 	initialize: function(){
 		this.model.bind('change', 	this.render, this);
 		this.model.bind('calc', 	this.calc, this);
+		this.model.bind('stats', 	this.stats, this);
 		this.model.bind('retype', 	this.retype, this);
 		this.model.bind('layout', 	this.renderLayout, this);
 		this.model.bind('change:type', this.labelType, this);
+		this.model.bind('change:chroma', this.labelChroma, this);
 	},
 
 
@@ -407,6 +446,25 @@ var Result = Backbone.View.extend({
 		}
 	},
 
+	labelChroma: function(){
+		var chroma = this.model.get("chroma");
+
+		switch(chroma){
+			case "10":
+				this.model.set({"chroma_label": "1+0 Ч/Б, 1 сторона"});
+				break;
+			case "11":
+				this.model.set({"chroma_label": "1+1 Ч/Б, 2 стороны"});
+				break;
+			case "40":
+				this.model.set({"chroma_label": "4+0 Цветная, 1 сторона"});
+				break;
+			case "44":
+				this.model.set({"chroma_label": "4+4 Цветная, 2 стороны"});
+				break;
+		}
+	},
+
 	resize: function(){
 		var senddata = {
 			width:  		this.model.get("width"),
@@ -454,6 +512,8 @@ var Result = Backbone.View.extend({
 		if (senddata.add_lamin) _.extend(senddata,{"lamin_name": this.model.get("lamin_name")});
 		if (senddata.add_big) 	_.extend(senddata,{"big_count": this.model.get("big_count"), "big_align": this.model.get("big_align")});
 
+		//_.extend(senddata, {debug: true});
+
 		$.ajax({
 			url: "/" + type + "/",
 			data: senddata,
@@ -462,6 +522,7 @@ var Result = Backbone.View.extend({
 				that.model.set({order_cost:""});
 				that.model.set(data);
 				$('#send').button('reset');
+				that.model.trigger("stats");
 			},
 			error: function(error){
 				app.log(error);
@@ -469,6 +530,23 @@ var Result = Backbone.View.extend({
 				$('#send').button('reset');
 			}
 		});
+	},
+
+	stats: function(){
+		if (app.debug){
+			var order 	= this.model.toJSON();
+
+			_.extend(order, {debug: true});
+
+			$.ajax({
+				url: "/add-order/",
+				data: order,
+				success: function(data){
+					app.log("Stats added!");
+					app.log(data);
+				}
+			})
+		}
 	},
 
 	renderLayout: function(){
@@ -564,7 +642,8 @@ var ShowOrder = Backbone.View.extend({
 	template:_.template($("#template-order").html()),
 
 	initialize: function(){
-		this.model.bind("change:order_cost", this.render, this)
+		this.model.bind("change:order_cost", this.render, this);
+		this.model.bind("change:product_cost", this.render, this);
 		this.model.bind("change:type_label", this.render, this)
 	},
 
@@ -575,12 +654,15 @@ var ShowOrder = Backbone.View.extend({
 	send: function(e){
 		e.preventDefault();
 
-		var order = this.model.toJSON(),
-			append = { email: $("#email").val()},
-			$el = $(this.el);
+		var order 	= this.model.toJSON(),
+			append 	= {email: $("#email").val(), phone: $("#phone").val()},
+			$el 	= $(this.el),
+			$send 	= $(e.currentTarget);
 
 		$("#status").remove();
 		_.extend(order,append);
+
+		$send.button('loading');
 
 		$.ajax({
 			url: "/add-order/",
@@ -594,7 +676,7 @@ var ShowOrder = Backbone.View.extend({
 				app.log(error);
 				$el.after("<div id='status' class='block alert-error'><strong>Error "+ error.status + " :</strong> "+ error.statusText + "</div>");
 				//$("#results").slideUp();
-				$('#send').button('reset');
+				$send.button('reset');
 			}
 		});
 	},
@@ -671,6 +753,12 @@ jQuery(document).ready(function($){
 	app.cols.papers = new Papers();
 	app.cols.formats = new Formats();
 	app.cols.lamins = new Lamins();
+	app.cols.chromas = new Chromas([
+		{chroma: 10, chroma_label: "1+0 Ч/Б, 1 сторона"},
+		{chroma: 11, chroma_label: "1+1 Ч/Б, 2 стороны"},
+		{chroma: 40, chroma_label: "4+0 Цветная, 1 сторона"},
+		{chroma: 44, chroma_label: "4+4 Цветная, 2 стороны"}
+	]);
 
 	//app.controller = new Controller(); // Создаём контроллер
 
@@ -679,7 +767,7 @@ jQuery(document).ready(function($){
 	app.views.result = new Result({model: app.models.order});
 	app.views.order = new ShowOrder({model: app.models.order});
 
-
+	//app.log(_.filter(app.cols.chromas.toJSON(), function(chroma){ return chroma["41"]}));
 	app.models.State.trigger("change"); // Вызовем событие change у модели
 	//app.models.order.bind("change:width",function(){});
 	/*app.models.State.bind("change:state", function () { // подписка на смену состояния для контроллера

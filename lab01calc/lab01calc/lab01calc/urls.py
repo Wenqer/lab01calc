@@ -16,7 +16,7 @@ urlpatterns = patterns('',
 
     # Home Page -- Replace if you like
     #url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
-    url(r'^$', views.start),
+    url(r'^$', views.login),
 
     # Uncomment the next line to enable the admin:
      url(r'^admin/', include(admin.site.urls)),
@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     (r'^lamin/$', views.lamin),
     (r'^login$', views.login),
     (r'^logout$', views.logout),
+    (r'^offset/$', views.offset),
     #ajaxuploader
     url(r'start$', views.start, name="start"),
     url(r'ajax-upload$', views.import_uploader, name="my_ajax_upload"),

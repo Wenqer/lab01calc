@@ -17,7 +17,16 @@
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap.css" />
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/style.css" />
     {% block css %}{% endblock %}
-    
+    <script type="text/javascript" id="qbaka">
+        (function (w,d) {w.__qbaka_eh = w.onerror;w.__qbaka_reports=[];w.onerror = function () {
+            w.__qbaka_reports.push(arguments);};w.qbaka={exec:function(c){try{c()}catch(e){}},report:function(){},
+            _ldr:function(){w.qbaka._ldd=true;},customParams:{},set:function set(p, v){
+                qbaka.customParams[p]=v;},exec:function(f){try{f();}catch (e){qbaka.reportException(e);}},
+            reportException:function(){}};var e=d.createElement('script');e.id='qbaka';e.type='text/javascript';
+            e.async=!0;e.src='//cdn.qbaka.net/reporting.js';var s=d.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(e, s);w.addEventListener?w.addEventListener("load",w.qbaka._ldr,!1):
+                    w.attachEvent("onload", w.qbaka._ldr);qbaka.key='643eef4180b511089920bcad174ddd35';})(window, document);
+    </script>
     <script src="{{ MEDIA_URL }}js/libs/modernizr-2.5.2.min.js"></script>
 </head>
 

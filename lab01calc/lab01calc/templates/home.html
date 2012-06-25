@@ -48,29 +48,22 @@
             <form action="" method="get" class="form-horizontal" name="start">
 
                 <div class="control-group">
-                    <label class="control-label" for="formats-block">Стандартные форматы:</label>
-                    <div class="controls">
+                    <!--<label class="control-label" for="formats-block">Стандартные форматы:</label>-->
+                    <label>Выберите стандартные форматы изделия:</label>
                         <div class="btn-group" id="formats-block">Загрузка...</div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="width">Ширина изделия (мм):</label>
+                    <div class="controls">
+                            <input class="num" type="text" name="width" id="width" value="100">
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="width">Ширина изделия:</label>
+                    <label class="control-label" for="height">Висота изделия (мм):</label>
                     <div class="controls">
-                        <div class="input-append">
-                            <input class="num span2" type="text" name="width" id="width" value="100">
-                            <span class="add-on">мм.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="height">Висота изделия:</label>
-                    <div class="controls">
-                        <div class="input-append">
-                            <input class="num span2" type="text" name="height" id="height" value="200">
-                            <span class="add-on">мм.</span>
-                        </div>
+                            <input class="num" type="text" name="height" id="height" value="200">
                     </div>
                 </div>
 
@@ -82,29 +75,26 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="time">Время на выполнение заказа:</label>
+                    <label class="control-label" for="time">Время на выполнение заказа (дни):</label>
                     <div class="controls">
-                        <div class="input-append">
-                            <input class="num span2" type="text" name="time" id="time" value="2">
-                            <span class="add-on">дней</span>
-                        </div>
+                            <input class="num" type="text" name="time" id="time" value="2">
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="chroma">Цветность:</label>
-                    <div class="controls">
-                        <select class="num" name="chroma" id="chroma">
+                    <label class="control-label">Цветность:</label>
+                    <div class="controls" id="chromas-block">
+                        <!--<select name="chroma" id="chromas-block">
                             <option value="10">1+0</option>
                             <option value="11">1+1</option>
                             <option value="40" selected="selected">4+0</option>
                             <option value="44">4+4</option>
-                        </select>
+                        </select>-->
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="papers-block">Выберите бумагу:</label>
+                    <label class="control-label" for="papers-block">Плотность бумаги (г/м2):</label>
                     <div class="controls">
                         <select name="param_value" id="papers-block">
                             <option value="">Loading</option>
@@ -147,28 +137,28 @@
                 </div>
 
                 <div id="bigs">
-                <div class="control-group">
-                    <label class="control-label">Количество бигов:</label>
-                    <div class="controls">
-                        <label class="radio inline" for="big1">
-                            <input type="radio" name="big_count" id="big1" value="1" checked>1
-                        </label>
-                        <label class="radio inline" for="big2">
-                            <input type="radio" name="big_count" id="big2" value="2">2
-                        </label>
+                    <div class="control-group">
+                        <label class="control-label">Количество бигов:</label>
+                        <div class="controls">
+                            <label class="radio inline" for="big1">
+                                <input type="radio" name="big_count" id="big1" value="1" checked>1
+                            </label>
+                            <label class="radio inline" for="big2">
+                                <input type="radio" name="big_count" id="big2" value="2">2
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Положение бига:</label>
-                    <div class="controls">
-                        <label class="radio inline" for="bigh">
-                            <input type="radio" name="big_align" id="bigh" value="horizontal" checked>Горизонтально
-                        </label>
-                        <label class="radio inline" for="bigv">
-                            <input type="radio" name="big_align" id="bigv" value="vertical">Вертикально
-                        </label>
+                    <div class="control-group">
+                        <label class="control-label">Положение бига:</label>
+                        <div class="controls">
+                            <label class="radio inline" for="bigh">
+                                <input type="radio" name="big_align" id="bigh" value="horizontal" checked>Горизонтально
+                            </label>
+                            <label class="radio inline" for="bigv">
+                                <input type="radio" name="big_align" id="bigv" value="vertical">Вертикально
+                            </label>
+                        </div>
                     </div>
-                </div>
                 </div>
                 <div id="alert"></div>
 
@@ -196,24 +186,28 @@
                 <dt>Время на выполение заказа:</dt>
                 <dd class="title"><%= time %> дней</dd>
                 <dt>Цветность:</dt>
-                <dd class="title"><%= chroma %></dd>
+                <dd class="title"><%= chroma_label %></dd>
                 <dt>Плотность бумаги:</dt>
                 <dd class="title"><%= param_value %> г/м2</dd>
                 <hr class="divinder">
                 <br>
+                <dt class="title">Итоговая цена изделия:</dt>
+                <dd class="title"><%= product_cost %> грн</dd>
                 <dt class="title">Итоговая цена печати:</dt>
                 <dd class="title"><span class="warm"><%= order_cost %> грн</span></dd>
             </dl>
+            <div id="fileUpload"></div>
             <div class="control-group">
-                <label class="control-label" for="email">Ваш емейл:</label>
+                <label class="control-label">Для продолжения оставте ваш емейл или телефон. Менеджер свяжется с вами.</label>
                 <div class="controls">
-                    <div class="input-append">
-                        <input type="text" name="time" id="email" class="input-medium">
-                        <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
-                    </div>
+                    <div class="input">
+                        <input type="email" name="email" id="email" class="input-medium" placeholder="Е-мейл" title="Е-мейл"/>
+                        <input type="phone" name="phone" id="phone" class="input-medium" placeholder="Телефон" title="Телефон"/>
+                        </div>
+                    <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
                 </div>
             </div>
-            <div id="fileUpload"></div>
+
         </div>
     </script>
 
@@ -229,6 +223,15 @@
     <script type="text/template" id="template-lamins-block">
         <% _.each(models, function(lamin){ %>
         <option id="lamin<%= lamin.lamin_name %>" value="<%= lamin.lamin_name %>"><%= lamin.lamin_label %></option>
+        <% }); %>
+    </script>
+
+    <!-- Блок вывода цветностей -->
+    <script type="text/template" id="template-chromas-block">
+        <% _.each(models, function(chroma){ %>
+        <label class="radio" for="chroma<%= chroma.chroma %>">
+            <input type="radio" name="chroma" id="chroma<%= chroma.chroma %>" value="<%= chroma.chroma %>"><%= chroma.chroma_label %>
+        </label>
         <% }); %>
     </script>
 

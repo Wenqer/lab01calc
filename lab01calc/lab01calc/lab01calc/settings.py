@@ -88,7 +88,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2147483648
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'mynameis.rost@gmail.com'
 EMAIL_HOST_PASSWORD = 'tracymcgrady1'
