@@ -31,6 +31,10 @@ class Order(models.Model):
     order_cost = models.FloatField(help_text='общая стоимость')
     layout = models.CharField(max_length=20000, blank=True)
 
+    class Meta:
+        verbose_name = u'Заказ'
+        verbose_name_plural = u'Заказы'
+
     def __unicode__(self):
         return self.date
 
@@ -47,6 +51,7 @@ class Stats(models.Model):
     width = models.FloatField(null=True, blank=True, help_text='ширина изделия')
     number_of_lists = models.IntegerField(null=True, blank=True, help_text='количество печатных листов')
     quant = models.IntegerField(null=True, blank=True, help_text='тираж')
+    on_paper = models.FloatField(help_text = 'количество изделий на листе')
     time = models.IntegerField(null=True, blank=True, help_text='время на изготовление')
     type = models.CharField(blank=True, max_length=20, help_text='тип печати')
     slices = models.IntegerField(null=True, blank=True, help_text='количество резов')
@@ -61,12 +66,21 @@ class Stats(models.Model):
     order_cost = models.FloatField(help_text='общая стоимость')
     layout = models.CharField(max_length=20000, blank=True)
 
+    class Meta:
+        verbose_name = u'Статистика'
+        verbose_name_plural = u'Статистика'
+
     def __unicode__(self):
         return self.date
 
 class Paper_params(models.Model):
     param_name = models.CharField(max_length=10, help_text='плотность бумаги кирилическое')
     param_value = models.CharField(max_length=10, help_text='плотность бумаги кодовое')
+
+    class Meta:
+        verbose_name = u'Плотность бумаг'
+        verbose_name_plural = u'Плотность бумаг'
+
     def __unicode__(self):
         return self.param_name
 
@@ -75,6 +89,11 @@ class Paper_price(models.Model):
     chroma = models.CharField(max_length=5, help_text='цветность')
     params = models.ForeignKey(Paper_params, default=1, help_text='плотность')
     paper_cost = models.FloatField(help_text='цена')
+
+    class Meta:
+        verbose_name = u'Прайс'
+        verbose_name_plural = u'Прайсы'
+
     def __unicode__(self):
         return self.format
 '''
@@ -91,6 +110,11 @@ class Size_paper(models.Model):
     width = models.SmallIntegerField(help_text='ширина')
     height = models.SmallIntegerField(help_text='висота')
     on_site = models.BooleanField(help_text = 'отображать на сайте')
+
+    class Meta:
+        verbose_name = u'Формат бумаги'
+        verbose_name_plural = u'Форматы бумаги'
+
     def __unicode__(self):
         return self.name
 
@@ -125,17 +149,30 @@ class Constants(models.Model):
     trim_offset = models.FloatField(help_text = 'допуск на подрезку в оффсете')
     print_area_offset = models.FloatField(help_text = 'допуск на запечатку в оффсете')
 
+    class Meta:
+        verbose_name = u'Константы'
+        verbose_name_plural = u'Константы'
+
 class Lamin(models.Model):
     lamin_label = models.CharField(max_length=25, help_text='Название ламинации кирилическое')
     lamin_name = models.CharField(max_length=25, help_text='Кодовое название')
     price_a4 = models.FloatField(help_text='цена за А4')
     price_a3 = models.FloatField(help_text='цена за А3')
+
+    class Meta:
+        verbose_name = u'Прайс на ламинацию'
+        verbose_name_plural = u'Прайсы на ламинацию'
+
     def __unicode__(self):
         return self.lamin_label
 
 class OffsetPrice(models.Model):
     density = models.IntegerField(help_text = 'плотность бумаги')
     price = models.FloatField(help_text='цена за А2')
+
+    class Meta:
+        verbose_name = u'Прайс на оффсет'
+        verbose_name_plural = u'Прайсы на оффсет'
 
 
 '''class Price_printing(models.Model):
