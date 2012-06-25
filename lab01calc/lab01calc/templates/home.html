@@ -187,8 +187,13 @@
                 <dd class="title"><%= time %> дней</dd>
                 <dt>Цветность:</dt>
                 <dd class="title"><%= chroma_label %></dd>
+                <% if (_.isNumber(parseInt(param_value))){ %>
                 <dt>Плотность бумаги:</dt>
-                <dd class="title"><%= param_value %> г/м2</dd>
+                <dd class="title"><%= paper_label %> г/м2</dd>
+                <% } else { %>
+                <dt>Тип бумаги:</dt>
+                <dd class="title"><%= paper_label %></dd>
+                <% } %>
                 <hr class="divinder">
                 <br>
                 <dt class="title">Итоговая цена изделия:</dt>
@@ -253,8 +258,13 @@
                 <div class="span7">
                     <!-- <h2>Тип полиграфии: <%= type %></h2>-->
                     <dl class="text-block">
+                        <% if (_.isNumber(parseInt(param_value))){ %>
                         <dt>Плотность бумаги:</dt>
-                        <dd><%= param_value %> г/м2</dd>
+                        <dd><%= paper_label %> г/м2</dd>
+                        <% } else { %>
+                        <dt>Тип бумаги:</dt>
+                        <dd><%= paper_label %></dd>
+                        <% } %>
                         <dt>Размер листа:</dt>
                         <dd><%= wid_a3 %>x<%= hei_a3 %> мм</dd>
                         <dt>Количество листов:</dt>
