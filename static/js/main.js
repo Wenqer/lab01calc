@@ -23,6 +23,7 @@ var Order = Backbone.Model.extend({
 		chroma: "", //цветность
 		chroma_label: "", //имя цветности
 		param_value: "", //атрибуты бумаги(имя, плотность)
+		paper_label: "", //атрибуты бумаги(имя, плотность)
 		add_trim: "true",
 		add_print_area: "true",
 		//параметры постпечатки
@@ -273,6 +274,8 @@ var Block = Backbone.View.extend({
 		});
 		if (errors)
 			return false;
+
+		data["paper_label"] = $(this.el).find("option:selected").html();
 
 		app.log(data);
 		app.models.order.set(data);//пишем начлаьные данные в модель заказа

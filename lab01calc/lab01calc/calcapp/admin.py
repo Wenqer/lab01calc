@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
 from calcapp.models import Constants, Size_paper, Order, Paper_params, Paper_price, Lamin, OffsetPrice, Stats
-from lab01calc.settings import MEDIA_URL
 from django.conf import settings
 
 class Size_paperAdmin(admin.ModelAdmin):
@@ -10,6 +10,7 @@ class Paper_priceAdmin(admin.ModelAdmin):
     list_display = ('format', 'chroma', 'params', 'paper_cost')
 
 class OrderAdmin(admin.ModelAdmin):
+
     class Media:
         #paths =   "%sjs/some_js.js".format({{ MEDIA_URL }}) #%()
         #paths = str({{MEDIA_URL}})
