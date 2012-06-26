@@ -665,6 +665,13 @@ var ShowOrder = Backbone.View.extend({
 		$("#status").remove();
 		_.extend(order,append);
 
+		if (_.isUndefined(this.model.get("file"))){
+			$el.after("<div id='status' class='block alert-error'><strong>Вы не загрузили макет!</strong> подтверждение заказа невозможно</div>");
+			return false;
+		}
+
+
+
 		$send.button('loading');
 
 		$.ajax({
