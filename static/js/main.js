@@ -8,10 +8,11 @@ app = {
 	state: "start",
 	models:{},
 	cols:{},
-	views:{}
+	views:{},
+	Core: {}
 };
 
-var Order = Backbone.Model.extend({
+app.Core.Order = Backbone.Model.extend({
 	defaults: {
 		type: "simple",
 		type_label: "",
@@ -58,7 +59,7 @@ var Order = Backbone.Model.extend({
 });
 
 
-var Format = Backbone.Model.extend({//Модель форматов
+app.Core.Format = Backbone.Model.extend({//Модель форматов
 	defaults:{
 		name: "", //имя формата
 		width: "",
@@ -66,8 +67,8 @@ var Format = Backbone.Model.extend({//Модель форматов
 	}
 });
 
-var Formats = Backbone.Collection.extend({//Набор форматов
-	model: Format,
+app.Core.Formats = Backbone.Collection.extend({//Набор форматов
+	model: app.Core.Format,
 	url: '/paper-size/',
 	id: 'formats-block',
 
@@ -81,15 +82,15 @@ var Formats = Backbone.Collection.extend({//Набор форматов
 });
 
 
-var Paper = Backbone.Model.extend({//Модель бумаги
+app.Core.Paper = Backbone.Model.extend({//Модель бумаги
 	defaults:{
 		param_name: "", //имя плотности
 		param_value: "" //значение плотности
 	}
 });
 
-var Papers = Backbone.Collection.extend({// Набор бумаги
-	model: Paper,
+app.Core.Papers = Backbone.Collection.extend({// Набор бумаги
+	model: app.Core.Paper,
 	url: '/paper-choose/',
 	id: "papers-block",
 
@@ -102,28 +103,28 @@ var Papers = Backbone.Collection.extend({// Набор бумаги
 	}
 });
 
-var Chroma = Backbone.Model.extend({
+app.Core.Chroma = Backbone.Model.extend({
 	defaults:{
 		chroma: "",
 		chroma_label: ""
 	}
 });
 
-var Chromas = Backbone.Collection.extend({
-	model: Chroma,
+app.Core.Chromas = Backbone.Collection.extend({
+	model: app.Core.Chroma,
 	id: "chromas-block"
 
 });
 
-var Lamin = Backbone.Model.extend({//Модель ламинации
+app.Core.Lamin = Backbone.Model.extend({//Модель ламинации
 	defaults:{
 		lamin_name: "",
 		lamin_label: ""
 	}
 });
 
-var Lamins = Backbone.Collection.extend({//Набор ламинаций
-	model: Lamin,
+app.Core.Lamins = Backbone.Collection.extend({//Набор ламинаций
+	model: app.Core.Lamin,
 	url: '/lamin/',
 	id: "lamins-block",
 
@@ -143,7 +144,7 @@ var AppState = Backbone.Model.extend({
 });
 
 
-var ListLamins = Backbone.View.extend({//Вывод ламинаций
+app.Core.ListLamins = Backbone.View.extend({//Вывод ламинаций
 
 	//template: _.template($('#template-lamins-block').html()),
 
@@ -162,7 +163,7 @@ var ListLamins = Backbone.View.extend({//Вывод ламинаций
 });
 
 
-var ListPapers = Backbone.View.extend({//Вывод бумаги
+app.Core.ListPapers = Backbone.View.extend({//Вывод бумаги
 
 	//template: _.template($('#template-papers-block').html()),
 
@@ -180,7 +181,7 @@ var ListPapers = Backbone.View.extend({//Вывод бумаги
 
 });
 
-var ListChromas = Backbone.View.extend({//Вывод бумаги
+app.Core.ListChromas = Backbone.View.extend({//Вывод бумаги
 
 	template: _.template($('#template-chromas-block').html()),
 
@@ -200,7 +201,7 @@ var ListChromas = Backbone.View.extend({//Вывод бумаги
 });
 
 
-var ListFormats = Backbone.View.extend({//Вывод форматов
+app.Core.ListFormats = Backbone.View.extend({//Вывод форматов
 
 	template: _.template($('#template-formats-block').html()),
 
@@ -229,7 +230,7 @@ var ListFormats = Backbone.View.extend({//Вывод форматов
 
 
 
-var Block = Backbone.View.extend({
+app.Core.Main = Backbone.View.extend({
 	el: $("#block"), // DOM элемент widget'а
 
 
@@ -351,10 +352,10 @@ var Block = Backbone.View.extend({
 	render: function () {
 		var state = this.model.get("state");
 		$(this.el).html(this.template(this.model.toJSON()));
-		this.chromas 	= new ListChromas({el: this.$("#" + app.cols.chromas.id), collection: app.cols.chromas});
-		this.lamins 	= new ListLamins({el: this.$("#" + app.cols.lamins.id), collection: app.cols.lamins});
-		this.papers 	= new ListLamins({el: this.$("#" + app.cols.papers.id), collection: app.cols.papers});
-		this.formats 	= new ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
+		this.chromas 	= new app.Core.ListChromas({el: this.$("#" + app.cols.chromas.id), collection: app.cols.chromas});
+		this.lamins 	= new app.Core.ListLamins ({el: this.$("#" + app.cols.lamins.id),  collection: app.cols.lamins});
+		this.papers 	= new app.Core.ListLamins ({el: this.$("#" + app.cols.papers.id),  collection: app.cols.papers});
+		this.formats 	= new app.Core.ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
 
 		$(this.el).tooltip({
 			selector: "label[data-rel=tooltip]"
@@ -366,7 +367,7 @@ var Block = Backbone.View.extend({
 });
 
 
-var Result = Backbone.View.extend({
+app.Core.Result = Backbone.View.extend({
 	el: $("#result"),
 
 
@@ -647,7 +648,7 @@ var Result = Backbone.View.extend({
 	}
 });
 
-var ShowOrder = Backbone.View.extend({
+app.Core.ShowOrder = Backbone.View.extend({
 	el: $("#order"),
 
 	template:_.template($("#template-order").html()),
@@ -765,13 +766,13 @@ var Controller = Backbone.Router.extend({
 jQuery(document).ready(function($){
 
 	app.models.State = new AppState();
-	app.models.order = new Order();
+	app.models.order = new app.Core.Order();
 
 
-	app.cols.papers = new Papers();
-	app.cols.formats = new Formats();
-	app.cols.lamins = new Lamins();
-	app.cols.chromas = new Chromas([
+	app.cols.papers 	= new app.Core.Papers();
+	app.cols.formats 	= new app.Core.Formats();
+	app.cols.lamins 	= new app.Core.Lamins();
+	app.cols.chromas 	= new app.Core.Chromas([
 		{chroma: 10, chroma_label: "1+0 Ч/Б, 1 сторона"},
 		{chroma: 11, chroma_label: "1+1 Ч/Б, 2 стороны"},
 		{chroma: 40, chroma_label: "4+0 Цветная, 1 сторона"},
@@ -781,9 +782,9 @@ jQuery(document).ready(function($){
 	//app.controller = new Controller(); // Создаём контроллер
 
 
-	app.views.page = new Block({model: app.models.State}); // создадим объект
-	app.views.result = new Result({model: app.models.order});
-	app.views.order = new ShowOrder({model: app.models.order});
+	app.views.page 		= new app.Core.Main({model: app.models.State}); // создадим объект
+	app.views.result 	= new app.Core.Result({model: app.models.order});
+	app.views.order 	= new app.Core.ShowOrder({model: app.models.order});
 
 	//app.log(_.filter(app.cols.chromas.toJSON(), function(chroma){ return chroma["41"]}));
 	app.models.State.trigger("change"); // Вызовем событие change у модели
