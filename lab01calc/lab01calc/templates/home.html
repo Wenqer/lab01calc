@@ -78,6 +78,8 @@
                     <label class="control-label" for="time">Время на выполнение заказа (дни):</label>
                     <div class="controls">
                             <input class="num" type="text" name="time" id="time" value="2">
+
+                        <p class="help-block">Введите количеcтво дней, которые вы можете выделить для печати данного заказа.</p>
                     </div>
                 </div>
 
@@ -105,10 +107,10 @@
                 <div class="control-group">
                     <label class="control-label">Опции раскладки:</label>
                     <div class="controls">
-                        <label class="checkbox inline" for="print_option1">
+                        <label class="checkbox inline toolLink" for="print_option1" data-rel="tooltip" title="Количество изделий на печатный лист более одного, но порезка на отдельные экземпляры не нужна">
                             <input type="checkbox" name="add_trim" id="print_option1" value="add_trim">Подрезку не учитывать
                         </label>
-                        <label class="checkbox inline" for="print_option2">
+                        <label class="checkbox inline toolLink" for="print_option2" data-rel="tooltip" title="Печатный макет имеет белые поля по периметру или оттиск будет ужат на 4 мм по каждой стороне (удешевляет заказ)">
                             <input type="checkbox" name="add_print_area" id="print_option2" value="add_print_area">Запечатка без вылетов
                         </label>
                     </div>
@@ -120,7 +122,7 @@
                         <label class="checkbox inline" for="add_lamin">
                             <input type="checkbox" name="add_lamin" id="add_lamin" value="add_lamin">Ламинация
                         </label>
-                        <label class="checkbox inline" for="add_big">
+                        <label class="checkbox inline toolLink" for="add_big" data-rel="tooltip" title="В печатаемом изделии присутствуют сгибы.">
                             <input type="checkbox" name="add_big" id="add_big" value="add_big">Биговка
                         </label>
                     </div>

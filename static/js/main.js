@@ -352,6 +352,10 @@ var Block = Backbone.View.extend({
 		this.papers 	= new ListPapers({el: this.$("#" + app.cols.papers.id), collection: app.cols.papers});
 		this.formats 	= new ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
 
+		$(this.el).tooltip({
+			selector: "label[data-rel=tooltip]"
+		});
+
 		return this;
 	}
 

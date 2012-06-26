@@ -68,6 +68,11 @@ h2{
 	margin-left: 50%;
 }
 
+.help-block{
+	font-style: italic;
+	color: #00365D;
+}
+
 .mbtn{
 	border-radius: 4px 4px 4px 4px;
 	border-style: solid;
@@ -91,6 +96,19 @@ h2{
 	background-color: transparent;
 }
 
+.tooltip-inner{
+	background-color: #5a5a5a;
+	color: #fff;
+}
+
+.tooltip.top .tooltip-arrow{
+	border-top: 5px solid #5a5a5a;
+}
+
+.toolLink{
+	color: #005b8e;
+}
+
 .qq-uploader { position:relative; width: 100%;}
 
 .qq-u.pload-button {
@@ -98,17 +116,17 @@ h2{
 	width: 105px; padding: 7px 0; text-align:center;
 	background:#880000; border-bottom:1px solid #ddd;color:#fff;
 }
-.qq-upload-button-hover {background:#cc0000;}
-.qq-upload-button-focus {outline:1px dotted black;}
+.qq-up.load-button-hover {background:#cc0000;}
+.qq-up.load-button-focus {outline:1px dotted black;}
 
 .qq-upload-drop-area {
 	position:absolute; top:0; left:0; width:100%; height:100%; min-height: 70px; z-index:2;
-	background:#FF9797; text-align:center;
+	background:#00aef0; text-align:center;
 }
 .qq-upload-drop-area span {
 	display:block; position:absolute; top: 50%; width:100%; margin-top:-8px; font-size:16px;
 }
-.qq-upload-drop-area-active {background:#FF7171;}
+.qq-upload-drop-area-active {background: #007eaf;}
 
 .qq-upload-list {margin:15px 35px; padding:0; list-style:disc;}
 .qq-upload-list li { margin:0; padding:0; line-height:15px; font-size:12px;}
