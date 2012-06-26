@@ -145,13 +145,15 @@ var AppState = Backbone.Model.extend({
 
 var ListLamins = Backbone.View.extend({//Вывод ламинаций
 
-	template: _.template($('#template-lamins-block').html()),
+	//template: _.template($('#template-lamins-block').html()),
 
 	initialize: function(){
-		this.collection.bind('reset', this.render, this)
+		this.collection.bind('reset', this.render, this);
 	},
 
 	render: function(){
+		this.template = _.template($('#template-' + this.collection.id).html());
+
 		$(this.el).html(this.template({
 			models: this.collection.toJSON()
 		}));
@@ -162,13 +164,15 @@ var ListLamins = Backbone.View.extend({//Вывод ламинаций
 
 var ListPapers = Backbone.View.extend({//Вывод бумаги
 
-	template: _.template($('#template-papers-block').html()),
+	//template: _.template($('#template-papers-block').html()),
 
 	initialize: function(){
 		this.collection.bind('reset', this.render, this)
 	},
 
 	render: function(){
+		this.template = _.template($('#template-' + this.collection.id).html());
+
 		$(this.el).html(this.template({
 			models: this.collection.toJSON()
 		}));
@@ -247,14 +251,14 @@ var Block = Backbone.View.extend({
 	load: function (e) {
 		e.preventDefault();
 		var errors = false;
-		$("#alert").add("#status").slideUp();
+		$("#alert, #status").slideUp();
 		$("#status").remove();
 		$("#alert").html("");
 		//$("#results").hide();
 		$(this.el).find('#send').button('loading');
 		$(this.el).find('.error').removeClass("error");
 		$(this.el).find('.warning').removeClass("warning");
-		$(this.el).find('.help-block').remove();
+		$(this.el).find('span.help-block').remove();
 		var data = {};
 		$.each(this.el.find("input:text, input:radio:checked, select"), function(){
 			var $input = $(this);
@@ -349,7 +353,7 @@ var Block = Backbone.View.extend({
 		$(this.el).html(this.template(this.model.toJSON()));
 		this.chromas 	= new ListChromas({el: this.$("#" + app.cols.chromas.id), collection: app.cols.chromas});
 		this.lamins 	= new ListLamins({el: this.$("#" + app.cols.lamins.id), collection: app.cols.lamins});
-		this.papers 	= new ListPapers({el: this.$("#" + app.cols.papers.id), collection: app.cols.papers});
+		this.papers 	= new ListLamins({el: this.$("#" + app.cols.papers.id), collection: app.cols.papers});
 		this.formats 	= new ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
 
 		$(this.el).tooltip({
