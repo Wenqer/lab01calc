@@ -613,17 +613,17 @@ def wide_types(request):
         return HttpResponse(json, mimetype='application/json', status=406)
 
 def wide_papers(request):
-    try:
+    #try:
         if 'wide_type' in request.GET and request.GET['wide_type']:
             wtype = request.GET['wide_type']
             d = WideTypes.objects.get(wide_type=wtype)
-            params = {"Papers" : list(Papers_wide.objects.filter(quality = d).values('wpaper_name', 'wpaper_label')), "d":d}
+            params = {"Papers" : list(Papers_wide.objects.filter(quality = d).values('wpaper_name', 'wpaper_label'))}
             json = simplejson.dumps(params, ensure_ascii=False, indent=4)
             return HttpResponse(json, mimetype='application/json; charset=utf-8')
-    except:
-        params = {"Oops something wrong." : "Error"}
-        json = simplejson.dumps(params)
-        return HttpResponse(json, mimetype='application/json', status=406)
+    #except:
+        #params = {"Oops something wrong." : "Error"}
+        #json = simplejson.dumps(params)
+        #return HttpResponse(json, mimetype='application/json', status=406)
 
 def wide(request):
 #try:
@@ -633,7 +633,8 @@ def wide(request):
         height = int(request.GET['height'])
         quant = int(request.GET['quant'])
         area = width * height * quant
-        d = int(request.GET['d'])
+        wtype = request.GET['wide_type']
+        d = WideTypes.objects.get(wide_type=wtype)
         if area <= 5000:
             cost = Papers_wide.objects.get(quality = d, wpaper_name = wpaper_name).cost5
         elif area > 5000 and area <= 20000:
@@ -642,7 +643,12 @@ def wide(request):
             cost = Papers_wide.objects.get(quality = d, wpaper_name = wpaper_name).cost20100
         elif area > 100000:
             cost = Papers_wide.objects.get(quality = d, wpaper_name = wpaper_name).cost100
-        json = simplejson.dumps(cost, ensure_ascii=False, indent=4)
+        order_cost = (area * cost)/1000
+        product_cost = (order_cost/quant)/1000
+        product_area = (width * height)/1000
+        order_area = area/1000
+        params = {"product_area":product_area, "order_area":order_area, "product_cost":product_cost, "order_cost":order_cost}
+        json = simplejson.dumps(params, ensure_ascii=False, indent=4)
         return HttpResponse(json, mimetype='application/json; charset=utf-8')
     else:
         params = {"Some parameters were not send" : "Error"}
