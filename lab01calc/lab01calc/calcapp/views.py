@@ -270,11 +270,18 @@ def add_order(request):
         dd = dt.strftime(format)
         add_lamin = request.GET['add_lamin'] # get using lamin or not
         add_big = request.GET['add_big'] # same for bigovka
-
+        if 'username' in request.GET and request.GET['username']:
+            username = request.GET['username']
+        else:
+            username = 'no name'
+        if 'comment' in request.GET and request.GET['comment']:
+            comment = request.GET['comment']
+        else:
+            comment = 'no comments'
         # sends to db different params (with or without lamination and bigovka)
         # with bigovka and lamination
         if ('big_cost' and 'big_align' and 'big_count' and 'lamin_cost' and 'lamin_name' in request.GET and request.GET['big_cost'] and request.GET['big_align'] and request.GET['big_count'] and request.GET['lamin_cost'] and request.GET['lamin_name']) and (add_lamin == 'true' and add_big == 'true'):
-            qr = Order(date = dd, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'], big_cost = float(request.GET['big_cost']), big_align = request.GET['big_align'], big_count = int(request.GET['big_count']), lamin_cost = request.GET['lamin_cost'], lamin_name = request.GET['lamin_name'],  paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
+            qr = Order(date = dd, comment = comment, username = username, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'], big_cost = float(request.GET['big_cost']), big_align = request.GET['big_align'], big_count = int(request.GET['big_count']), lamin_cost = request.GET['lamin_cost'], lamin_name = request.GET['lamin_name'],  paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
             qrbig_cost = qr.big_cost
             qrbig_count = qr.big_count
             qrlamin_cost = qr.lamin_cost
@@ -285,7 +292,7 @@ def add_order(request):
             elif qr.lamin_name == 'mt125': qrlamin_name = 'Матовая 125'
         # with bigovka, not lamination
         elif ('big_cost' and 'big_align' and 'big_count' in request.GET and request.GET['big_cost'] and request.GET['big_align'] and request.GET['big_count']) and (add_big == 'true' and add_lamin == 'false'):
-            qr = Order(date = dd, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'],  big_cost = float(request.GET['big_cost']), big_align = request.GET['big_align'], big_count = int(request.GET['big_count']), paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
+            qr = Order(date = dd, comment = comment, username = username, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'],  big_cost = float(request.GET['big_cost']), big_align = request.GET['big_align'], big_count = int(request.GET['big_count']), paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
             qrbig_cost = qr.big_cost
             qrbig_count = qr.big_count
             if qr.big_align == 'vertical': qrbig_align = 'Вертикальная'
@@ -294,7 +301,7 @@ def add_order(request):
             qrlamin_name = 'нет'
         # with lamination, not bigovka
         elif ('lamin_cost' and 'lamin_name' in request.GET and request.GET['lamin_cost'] and request.GET['lamin_name']) and (add_big == 'false' and add_lamin == 'true'):
-            qr = Order(date = dd, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'], lamin_cost = request.GET['lamin_cost'], lamin_name = request.GET['lamin_name'], paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
+            qr = Order(date = dd, comment = comment, username = username, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'], lamin_cost = request.GET['lamin_cost'], lamin_name = request.GET['lamin_name'], paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
             qrlamin_cost = qr.lamin_cost
             if qr.lamin_name == 'gl130': qrlamin_name = 'Глянцевая 130'
             elif qr.lamin_name == 'gl175': qrlamin_name = 'Глянцевая 175'
@@ -304,7 +311,7 @@ def add_order(request):
             qrbig_count = 'нет'
         # without
         elif add_lamin == 'false' and add_big == 'false':
-            qr = Order(date = dd, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'], paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
+            qr = Order(date = dd, comment = comment, username = username, telephone = request.GET['phone'], email = emails, layout = request.GET['layout'], paper = request.GET['param_value'], list_format = request.GET['format'], on_paper = int(request.GET['On_paper']), slices = int(request.GET['slices']), slice_cost = float(request.GET['slice_cost']), print_cost = float(request.GET['print_cost']), chroma = int(request.GET['chroma']), finally_production = int(request.GET['finally_production']), h_list = int(request.GET['hei_a3']), height = float(request.GET['height']), number_of_lists = int(request.GET['number_of_lists']), order_cost = float(request.GET['order_cost']), quant = int(request.GET['quant']), time = int(request.GET['time']), type = request.GET['type'], w_list = int(request.GET['wid_a3']), width = float(request.GET['width']))
             qrbig_cost = 'нет'
             qrbig_align = 'нет'
             qrbig_count = 'нет'
@@ -557,6 +564,8 @@ def stats(request):
     type_of_print = request.GET['type']
     if type_of_print == 'offset':
         qr = Stats(width = request.GET['width'], height = request.GET['height'], product_cost = request.GET['product_cost'], number_of_lists = request.GET['number_of_lists'], finally_production = request.GET['finally_production'], w_list = request.GET['wid_a3'], h_list = request.GET['hei_a3'], slices = request.GET['slices'],  order_cost = request.GET['order_cost'], list_format = request.GET['format'])
+    elif type_of_print == 'wide':
+        qr = Stats(width = request.GET['width'], height = request.GET['height'], product_cost = request.GET['product_cost'],  order_cost = request.GET['order_cost'])
     else:
         # sends to db different params (with or without lamination and bigovka)
         # with bigovka and lamination
@@ -629,13 +638,13 @@ def wide(request):
     try:
         if 'wpaper_name' and 'width' and 'height' and 'quant' and 'wide_type' in request.GET and request.GET['wpaper_name'] and request.GET['width'] and request.GET['height'] and request.GET['quant'] and request.GET['wide_type']:
             wpaper_name = request.GET['wpaper_name']
-            width = int(request.GET['width'])
-            height = int(request.GET['height'])
+            width = float(request.GET['width'])/1000
+            height = float(request.GET['height'])/1000
             quant = int(request.GET['quant'])
-            area = (width * height * quant)/1000000
+            area = (width * height * quant)
             wtype = request.GET['wide_type']
             d = WideTypes.objects.get(wide_type=wtype)
-
+            k_wide = Constants.objects.get(pk=1).k_wide
             if area <= 5:
                 cost = Papers_wide.objects.get(quality = d, wpaper_name = wpaper_name).cost5
             elif area > 5 and area <= 20:
@@ -644,10 +653,14 @@ def wide(request):
                 cost = Papers_wide.objects.get(quality = d, wpaper_name = wpaper_name).cost20100
             elif area > 100:
                 cost = Papers_wide.objects.get(quality = d, wpaper_name = wpaper_name).cost100
-            order_cost = area * cost
+            order_cost = (area * cost) * k_wide
             product_cost = order_cost/quant
-            product_area = (width * height)/10
+            product_area = width * height
             order_area = area
+            order_area = round(order_area, 2)
+            order_cost = round(order_cost, 2)
+            product_area = round(product_area, 2)
+            product_cost = round(product_cost, 2)
             params = {"product_area":product_area, "order_area":order_area, "product_cost":product_cost, "order_cost":order_cost}
             json = simplejson.dumps(params, ensure_ascii=False, indent=4)
             return HttpResponse(json, mimetype='application/json; charset=utf-8')
