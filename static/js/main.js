@@ -484,9 +484,9 @@ app.Core.Main = Backbone.View.extend({
 		this.papers 	= new app.Core.ListLamins ({el: this.$("#" + app.cols.papers.id),  collection: app.cols.papers});
 		this.formats 	= new app.Core.ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
 
-		/*this.wideTypes = new app.Core.ListWideTypes({el: this.$("#" + app.cols.wideTypes.id), collection: app.cols.wideTypes});
+		this.wideTypes = new app.Core.ListWideTypes({el: this.$("#" + app.cols.wideTypes.id), collection: app.cols.wideTypes});
 		this.widePapers = new app.Core.ListWidePapers({el: this.$("#" + app.cols.widePapers.id), collection: app.cols.widePapers});
-		*/
+
 		$(this.el).tooltip({
 			selector: "label[data-rel=tooltip]"
 		});
