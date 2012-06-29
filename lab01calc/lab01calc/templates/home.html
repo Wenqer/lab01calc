@@ -211,12 +211,19 @@
                 <dd class="title"><%= time %> дней</dd>
                 <dt>Цветность:</dt>
                 <dd class="title"><%= chroma_label %></dd>
-                <% if (_.isNumber(parseInt(param_value))){ %>
-                <dt>Плотность бумаги:</dt>
-                <dd class="title"><%= paper_label %> г/м2</dd>
+                <% if (_.isEmpty(wide_type)){ %>
+                    <% if (_.isNumber(parseInt(param_value))){ %>
+                        <dt>Плотность бумаги:</dt>
+                        <dd class="title"><%= paper_label %> г/м2</dd>
+                    <% } else { %>
+                        <dt>Тип бумаги:</dt>
+                        <dd class="title"><%= paper_label %></dd>
+                    <% } %>
                 <% } else { %>
-                <dt>Тип бумаги:</dt>
-                <dd class="title"><%= paper_label %></dd>
+                    <dt>Площадь изделия:</dt>
+                    <dd class="title"><%= product_area %> м2</dd>
+                    <dt>Площадь заказа:</dt>
+                    <dd class="title"><%= order_area %> м2</dd>
                 <% } %>
                 <hr class="divinder">
                 <br>
