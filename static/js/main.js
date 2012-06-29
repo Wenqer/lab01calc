@@ -790,7 +790,7 @@ app.Core.ShowOrder = Backbone.View.extend({
 		e.preventDefault();
 
 		var order 	= this.model.toJSON(),
-			append 	= {email: $("#email").val(), phone: $("#phone").val(), comment: $("#comment").val()},
+			append 	= {email: $("#email").val(), phone: $("#phone").val(), comment: $("#comment").val(), username: $("#name").val()},
 			$el 	= $(this.el),
 			$send 	= $(e.currentTarget);
 

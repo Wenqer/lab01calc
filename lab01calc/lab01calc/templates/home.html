@@ -87,6 +87,7 @@
                 <div class="control-group">
                     <label class="control-label">Цветность:</label>
                     <div class="controls" id="chromas-block">
+                        Загрузка...
                         <!--<select name="chroma" id="chromas-block">
                             <option value="10">1+0</option>
                             <option value="11">1+1</option>
@@ -96,30 +97,32 @@
                     </div>
                 </div>
                 <!--
-                <div class="control-group">
+                <div class="control-group" id="wide-types">
                     <label class="control-label">Тип широкоформатной печати:</label>
                     <div class="controls" id="wide-types-block">
+                        Загрузка...
                     </div>
                 </div>
-                -->
+                    -->
+                <!--
                 <div class="control-group">
                     <label class="control-label" for="papers-block">Плотность бумаги (г/м2):</label>
                     <div class="controls">
                         <select name="param_value" id="papers-block">
-                            <option value="">Loading</option>
-                        </select>
-                    </div>
-                </div>
-                <!--
-                <div class="control-group">
-                    <label class="control-label" for="wide-papers-block">Широкоформатная бумага:</label>
-                    <div class="controls">
-                        <select name="wpaper_name" id="wide-papers-block">
-                            <option value="">Loading</option>
+                            <option>Загрузка...</option>
                         </select>
                     </div>
                 </div>
                 -->
+                <div class="control-group" id="wide-papers">
+                    <label class="control-label" for="wide-papers-block">Широкоформатная бумага:</label>
+                    <div class="controls">
+                        <select name="wpaper_name" id="wide-papers-block">
+                            <option>Загрузка...</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="control-group">
                     <label class="control-label">Опции раскладки:</label>
                     <div class="controls">
@@ -148,7 +151,7 @@
                     <label class="control-label" for="lamins-block">Выберите ламинацию:</label>
                     <div class="controls">
                         <select name="lamin_name" id="lamins-block">
-                            <option value="">Loading</option>
+                            <option>Загрузка...</option>
                         </select>
                     </div>
 
@@ -224,10 +227,10 @@
                 <label class="control-label">Для продолжения оставте ваш емейл или телефон. Менеджер свяжется с вами.</label>
                 <div class="controls">
                     <div class="input">
+                        <input type="username" name="name" id="name" class="input-medium" placeholder="Ваше имя" title="Выше ммя"/>
                         <input type="email" name="email" id="email" class="input-medium" placeholder="Е-мейл" title="Е-мейл"/>
                         <input type="phone" name="phone" id="phone" class="input-medium" placeholder="Телефон" title="Телефон"/>
-                        </div>
-
+                    </div>
                 </div>
             </div>
             <div class="control-group">
