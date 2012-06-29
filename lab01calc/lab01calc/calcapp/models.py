@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-#
+
 class Order(models.Model):
     date = models.CharField(max_length=30, help_text='дата заказа')
     email = models.EmailField(help_text='почта заказчика')
@@ -51,7 +51,7 @@ class Stats(models.Model):
     width = models.FloatField(null=True, blank=True, help_text='ширина изделия')
     number_of_lists = models.IntegerField(null=True, blank=True, help_text='количество печатных листов')
     quant = models.IntegerField(null=True, blank=True, help_text='тираж')
-    on_paper = models.FloatField(help_text = 'количество изделий на листе')
+    on_paper = models.FloatField(help_text = 'количество изделий на листе', null=True)
     time = models.IntegerField(null=True, blank=True, help_text='время на изготовление')
     type = models.CharField(blank=True, max_length=20, help_text='тип печати')
     slices = models.IntegerField(null=True, blank=True, help_text='количество резов')
@@ -96,13 +96,7 @@ class Paper_price(models.Model):
 
     def __unicode__(self):
         return self.format
-'''
-class Price_paper(models.Model):
-    name = models.CharField(max_length=30)
-    density = models.SmallIntegerField()
-    cost = models.FloatField()
-    def __unicode__(self):
-        return self.name'''
+
 
 class Size_paper(models.Model):
     name = models.CharField(max_length=20, help_text='имя формата')
@@ -175,8 +169,31 @@ class OffsetPrice(models.Model):
         verbose_name_plural = u'Прайсы на оффсет'
 
 
-'''class Price_printing(models.Model):
-    thickness = models.FloatField()
-    print_price = models.FloatField()
+class WideTypes(models.Model):
+    wide_type = models.CharField(max_length=10, help_text='качество печати')
+    wide_type_label = models.CharField(max_length=60, help_text='описание типа печати на кирилице')
+    maxsize = models.IntegerField(help_text='максимальний формат печати в милиметрах')
+
+
+    class Meta:
+        verbose_name = u'Качество печати'
+        verbose_name_plural = u'Качество печати'
+
     def __unicode__(self):
-        return self.print_price'''
+        return self.wide_type_label
+
+class Papers_wide(models.Model):
+    wpaper_name = models.CharField(max_length=50, help_text='кодовое имя материала латиницей (без пробелов)')
+    wpaper_label = models.CharField(max_length=100,  help_text='имя материала кирилицей')
+    quality = models.ForeignKey(WideTypes, help_text='качество печати')
+    cost5 = models.IntegerField(null=True, blank=True, help_text='цена за площадь до 5 м.кв.')
+    cost520 = models.IntegerField(null=True, blank=True, help_text='цена за площадь 5-20м.кв.')
+    cost20100 = models.IntegerField(null=True, blank=True, help_text='цена за площадь 20-100м.кв.')
+    cost100 = models.IntegerField(null=True, blank=True, help_text='цена за площадь больше 100м.кв.')
+
+    class Meta:
+        verbose_name = u'Прайс широкоформатной печати'
+        verbose_name_plural = u'Прайсы широкоформатной печати'
+
+    def __unicode__(self):
+        return self.wpaper_label
