@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from calcapp.models import Constants, Size_paper, Order, Paper_params, Paper_price, Lamin, OffsetPrice, Stats
+from calcapp.models import Constants, Size_paper, Order, Paper_params, Paper_price, Lamin, OffsetPrice, Stats, WideTypes, Papers_wide
 from django.conf import settings
 
 class Size_paperAdmin(admin.ModelAdmin):
@@ -43,5 +43,7 @@ admin.site.register(Paper_price, Paper_priceAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OffsetPrice, OffsetPriceAdmin)
 admin.site.register(Stats, StatsAdmin)
+admin.site.register(WideTypes)
+admin.site.register(Papers_wide)
 
 

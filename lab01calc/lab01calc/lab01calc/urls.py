@@ -38,6 +38,9 @@ urlpatterns = patterns('',
     #ajaxuploader
     url(r'start$', views.start, name="start"),
     url(r'ajax-upload$', views.import_uploader, name="my_ajax_upload"),
+    (r'wide-types', views.wide_types),
+    (r'wide-papers', views.wide_papers),
+
 
 
 
