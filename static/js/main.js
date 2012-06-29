@@ -30,6 +30,8 @@ app.Core.Order = Backbone.Model.extend({
 		//широкофрматка
 		wide_type: "",
 		wpaper_name: "",
+		product_area: "",
+		order_area: "",
 		//параметры постпечатки
 		add_lamin: "false", //добавка ламинации
 		lamin_name: "", //кодовое имя выбраной ламинации
@@ -293,7 +295,7 @@ app.Core.ListWideTypes = Backbone.View.extend({
 		var $this = $(e.currentTarget),
 			data = {wide_type: $this.val()};
 
-		app.models.order.set(data);
+		app.models.order.set(data, {silent: true});
 		app.cols.widePapers.fetch({data: data});
 	},
 
@@ -401,6 +403,11 @@ app.Core.Main = Backbone.View.extend({
 			return false;
 
 		data["paper_label"] = $(this.el).find("#papers option:selected").html();
+		/*if (_.isString(data["wide_type"])){
+			data["param_value"] = "";
+			data["param_label"] = "";
+		}
+		*/
 
 		app.log(data);
 		app.models.order.set(data);//пишем начлаьные данные в модель заказа
@@ -818,7 +825,7 @@ app.Core.ShowOrder = Backbone.View.extend({
 	template:_.template($("#template-order").html()),
 
 	initialize: function(){
-		this.model.bind("change:order_cost", this.render, this);
+		this.model.bind("change", this.render, this);
 		this.model.bind("change:product_cost", this.render, this);
 		this.model.bind("change:type_label", this.render, this)
 	},
