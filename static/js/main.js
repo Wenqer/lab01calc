@@ -136,6 +136,51 @@ app.Core.Lamins = Backbone.Collection.extend({//Набор ламинаций
 	}
 });
 
+app.Core.WideType = Backbone.Model.extend({
+	defaults:{
+		wide_type: "",
+		wide_type_label: "",
+		maxsize: ""
+	}
+});
+
+app.Core.WideTypes = Backbone.Collection.extend({
+	model: app.Core.WideType,
+	url: '/wide-types/',
+	id: 'wide-types-block',
+
+	initialize: function(){
+		this.fetch()
+	},
+	parse: function(resp, xhr){
+		return resp.Paper
+	}
+});
+
+app.Core.WidePaper = Backbone.Model.extend({
+	defaults:{
+		wpaper_name: "",
+		wpaper_label: ""
+	}
+});
+
+app.Core.WidePapers = Backbone.Collection.extend({
+	model: app.Core.WidePaper,
+	url: '/wide-papers/',
+	id: 'wide-papers-block',
+
+	initialize: function(){
+		/*app.models.order.bind('change:wide_type',this.fetch({
+			data: {
+				wide_type: app.models.order.get("wide_type")
+			}
+		}),this)*/
+	},
+
+	parse: function(resp, xhr){
+		return resp.Papers
+	}
+});
 
 var AppState = Backbone.Model.extend({
 	defaults: {
@@ -180,6 +225,7 @@ app.Core.ListPapers = Backbone.View.extend({//Вывод бумаги
 	}
 
 });
+
 
 app.Core.ListChromas = Backbone.View.extend({//Вывод бумаги
 
@@ -228,7 +274,63 @@ app.Core.ListFormats = Backbone.View.extend({//Вывод форматов
 
 });
 
+app.Core.ListWideTypes = Backbone.View.extend({
 
+	initialize: function(){
+		this.collection.bind('reset', this.render, this);
+
+	},
+
+	events:{
+		"click input[name='wide_type']": "update"
+	},
+
+	update: function(e){
+		var $this = $(e.currentTarget),
+			data = {wide_type: $this.val()};
+
+		app.models.order.set(data);
+		app.cols.widePapers.fetch({data: data});
+	},
+
+	toggle: function(){
+		if ($(this.el).is(":visible")){
+			$(this.el).hide();
+			this.trigger("hide");
+		}
+		else{
+			$(this.el).show();
+			this.trigger("show");
+		}
+	},
+
+	render: function(){
+		this.template = _.template($('#template-' + this.collection.id).html());
+
+		$(this.el).html(this.template({
+			models: this.collection.toJSON()
+		}));
+
+
+		return this
+	}
+});
+
+app.Core.ListWidePapers = Backbone.View.extend({
+
+	initialize: function(){
+		this.collection.bind('reset', this.render, this);
+	},
+
+	render: function(){
+		this.template = _.template($('#template-' + this.collection.id).html());
+
+		$(this.el).html(this.template({
+			models: this.collection.toJSON()
+		}));
+		return this
+	}
+});
 
 app.Core.Main = Backbone.View.extend({
 	el: $("#block"), // DOM элемент widget'а
@@ -239,6 +341,7 @@ app.Core.Main = Backbone.View.extend({
 	events: {
 		"click #send": "load", // Обработчик клика на кнопке "Проверить"
 		//"click #login-btn": "login", // Обработчик клика на кнопке "Проверить"
+		"keyup #time": "checkTime",
 		"click #add_lamin": "load_lamin", //вывод ламинаций
 		"click #add_big": "load_big" //вывод биговок
 	},
@@ -287,6 +390,21 @@ app.Core.Main = Backbone.View.extend({
 		app.models.order.trigger("retype");//выясняем тип заказа
 	},
 
+	checkTime: function(e){
+		var $this = $(e.currentTarget);
+		var val = $this.val();
+
+		if (val>10){
+			e.preventDefault();
+			$this.val(10);
+		}
+		else if (val < 1){
+			e.preventDefault();
+			$this.val(1);
+		}
+
+	},
+
 	/*login: function(e){
 		//e.preventDefault();
 
@@ -331,17 +449,17 @@ app.Core.Main = Backbone.View.extend({
 			$a3 = $(this.el).find("#paper100"),
 			$paper = $(this.el).find("#papers-block"),
 			format = app.models.order.get("format");
-		//app.log(format);
+		app.log(format);
 		if ($paper.val() == "80" && (format=="A3" || format=="A3p")){
 			$paper.closest(".control-group").addClass("warning");
-			//app.log(80);
+			app.log(80);
 			$paper.after("<span class='help-block'>Эта бумага не доступна для А3, просчёт выполнен на 100</span>");
 			app.models.order.set({param_value: 100}, {silent: true});
 			return false
 		}
 
 		if ($paper.val() == "100" && (format=="A4" || format=="A4p")){
-			//app.log(100);
+			app.log(100);
 			$paper.closest(".control-group").addClass("warning");
 			$paper.after("<span class='help-block'>Эта бумага не доступна для А4, просчёт выполнен на 80</span>");
 			app.models.order.set({param_value: 80}, {silent: true});
@@ -357,6 +475,9 @@ app.Core.Main = Backbone.View.extend({
 		this.papers 	= new app.Core.ListLamins ({el: this.$("#" + app.cols.papers.id),  collection: app.cols.papers});
 		this.formats 	= new app.Core.ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
 
+		/*this.wideTypes = new app.Core.ListWideTypes({el: this.$("#" + app.cols.wideTypes.id), collection: app.cols.wideTypes});
+		this.widePapers = new app.Core.ListWidePapers({el: this.$("#" + app.cols.widePapers.id), collection: app.cols.widePapers});
+		*/
 		$(this.el).tooltip({
 			selector: "label[data-rel=tooltip]"
 		});
@@ -421,6 +542,7 @@ app.Core.Result = Backbone.View.extend({
 							app.models.order.set({type: "offset"}); // Уходим на оффсет
 						}
 					}
+					app.models.order.trigger("change:format");
 					app.models.order.trigger("calc");
 				});
 
@@ -538,7 +660,8 @@ app.Core.Result = Backbone.View.extend({
 			},
 			error: function(error){
 				app.log(error);
-				$("#alert").after("<div id='status' class='alert alert-error'><strong>Error "+ error.status + " :</strong> "+ error.statusText + "</div>");
+				//$("#alert").after("<div id='status' class='alert alert-error'><strong>Error "+ error.status + " :</strong> "+ error.statusText + "</div>");
+				$("#alert").after("<div id='status' class='alert alert-error'><strong>Ошибка</strong> при заданных параметрах просчёт невозможен</div>");
 				$('#send').button('reset');
 			}
 		});
@@ -667,7 +790,7 @@ app.Core.ShowOrder = Backbone.View.extend({
 		e.preventDefault();
 
 		var order 	= this.model.toJSON(),
-			append 	= {email: $("#email").val(), phone: $("#phone").val()},
+			append 	= {email: $("#email").val(), phone: $("#phone").val(), comment: $("#comment").val()},
 			$el 	= $(this.el),
 			$send 	= $(e.currentTarget);
 
@@ -675,8 +798,8 @@ app.Core.ShowOrder = Backbone.View.extend({
 		_.extend(order,append);
 
 		if (_.isUndefined(this.model.get("file"))){
-			$el.after("<div id='status' class='block alert-error'><strong>Вы не загрузили макет!</strong> подтверждение заказа невозможно</div>");
-			return false;
+			$el.after("<div id='status' class='block alert-warning'><strong>Вы не загрузили макет!</strong> необходима разработка</div>");
+			//return false;
 		}
 
 
@@ -693,7 +816,8 @@ app.Core.ShowOrder = Backbone.View.extend({
 			},
 			error: function(error){
 				app.log(error);
-				$el.after("<div id='status' class='block alert-error'><strong>Error "+ error.status + " :</strong> "+ error.statusText + "</div>");
+				//$el.after("<div id='status' class='block alert-error'><strong>Error "+ error.status + " :</strong> "+ error.statusText + "</div>");
+				$el.after("<div id='status' class='block alert-error'><strong>Ошибка</strong> что-то пошло не так :(</div>");
 				//$("#results").slideUp();
 				$send.button('reset');
 			}
@@ -715,6 +839,7 @@ app.Core.ShowOrder = Backbone.View.extend({
 				} else {
 					app.log("upload failed!");
 				}
+				app.log(fileName);
 				that.model.set({ file: fileName});
 			},
 			onAllComplete: function(uploads) {
@@ -729,6 +854,7 @@ app.Core.ShowOrder = Backbone.View.extend({
 				'csrf_xname': 'X-CSRFToken'
 			}
 		});
+		$(this.el).find("#phone").mask("999-999-99-99");
 		$(this.el).slideDown();
 		return this
 	}
@@ -778,6 +904,9 @@ jQuery(document).ready(function($){
 		{chroma: 40, chroma_label: "4+0 Цветная, 1 сторона"},
 		{chroma: 44, chroma_label: "4+4 Цветная, 2 стороны"}
 	]);
+	app.cols.wideTypes = new app.Core.WideTypes();
+	app.cols.widePapers = new app.Core.WidePapers();
+
 
 	//app.controller = new Controller(); // Создаём контроллер
 

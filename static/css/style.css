@@ -96,6 +96,10 @@ h2{
 	background-color: transparent;
 }
 
+.form-horizontal .control-label{
+	width: 150px;
+}
+
 .tooltip-inner{
 	background-color: #5a5a5a;
 	color: #fff;

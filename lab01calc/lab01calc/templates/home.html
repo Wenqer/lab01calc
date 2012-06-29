@@ -54,6 +54,7 @@
                 </div>
 
                 <div class="control-group">
+                    <label>Или введите размеры вручную:</label>
                     <label class="control-label" for="width">Ширина изделия (мм):</label>
                     <div class="controls">
                             <input class="num" type="text" name="width" id="width" value="100">
@@ -94,7 +95,13 @@
                         </select>-->
                     </div>
                 </div>
-
+                <!--
+                <div class="control-group">
+                    <label class="control-label">Тип широкоформатной печати:</label>
+                    <div class="controls" id="wide-types-block">
+                    </div>
+                </div>
+                -->
                 <div class="control-group">
                     <label class="control-label" for="papers-block">Плотность бумаги (г/м2):</label>
                     <div class="controls">
@@ -103,7 +110,16 @@
                         </select>
                     </div>
                 </div>
-
+                <!--
+                <div class="control-group">
+                    <label class="control-label" for="wide-papers-block">Широкоформатная бумага:</label>
+                    <div class="controls">
+                        <select name="wpaper_name" id="wide-papers-block">
+                            <option value="">Loading</option>
+                        </select>
+                    </div>
+                </div>
+                -->
                 <div class="control-group">
                     <label class="control-label">Опции раскладки:</label>
                     <div class="controls">
@@ -211,8 +227,16 @@
                         <input type="email" name="email" id="email" class="input-medium" placeholder="Е-мейл" title="Е-мейл"/>
                         <input type="phone" name="phone" id="phone" class="input-medium" placeholder="Телефон" title="Телефон"/>
                         </div>
-                    <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
+
                 </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="comment">Комментарий к заказу</label>
+
+                <div class="controls">
+                    <textarea name="comment" id="comment" class="input-xlarge" rows="3"></textarea>
+                </div>
+                <button class="btn btn-success" id="send-order" data-loading-text="Загрузка">Подтвердить заказ</button>
             </div>
 
         </div>
@@ -233,11 +257,27 @@
         <% }); %>
     </script>
 
+    <!-- Блок вывода широкоформатной бумаги -->
+    <script type="text/template" id="template-wide-papers-block">
+        <% _.each(models, function(paper){ %>
+        <option id="wide-paper-<%= paper.wpaper_name %>" value="<%= paper.wpaper_name %>"><%= paper.wpaper_label %></option>
+        <% }); %>
+    </script>
+
     <!-- Блок вывода цветностей -->
     <script type="text/template" id="template-chromas-block">
         <% _.each(models, function(chroma){ %>
         <label class="radio" for="chroma<%= chroma.chroma %>">
             <input type="radio" name="chroma" id="chroma<%= chroma.chroma %>" value="<%= chroma.chroma %>"><%= chroma.chroma_label %>
+        </label>
+        <% }); %>
+    </script>
+
+    <!-- Блок вывода типов широкоформатной печати -->
+    <script type="text/template" id="template-wide-types-block">
+        <% _.each(models, function(type){ %>
+        <label class="radio" for="wide-type-<%= type.wide_type %>">
+            <input type="radio" name="wide_type" id="wide-type-<%= type.wide_type %>" value="<%= type.wide_type %>"><%= type.wide_type_label %>
         </label>
         <% }); %>
     </script>
