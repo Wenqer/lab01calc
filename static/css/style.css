@@ -25,7 +25,7 @@ h2{
 	margin: 20px;
 	position: absolute;
 }
-#result, #order, #lamins, #bigs, #wide-types{
+#result, #order, #lamins, #bigs, #wide-types, #wide-papers{
 	display: none;
 }
 #lay.out{

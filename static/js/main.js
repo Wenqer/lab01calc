@@ -27,6 +27,9 @@ app.Core.Order = Backbone.Model.extend({
 		paper_label: "", //атрибуты бумаги(имя, плотность)
 		add_trim: "true",
 		add_print_area: "true",
+		//широкофрматка
+		wide_type: "",
+		wpaper_name: "",
 		//параметры постпечатки
 		add_lamin: "false", //добавка ламинации
 		lamin_name: "", //кодовое имя выбраной ламинации
@@ -278,7 +281,8 @@ app.Core.ListWideTypes = Backbone.View.extend({
 
 	initialize: function(){
 		this.collection.bind('reset', this.render, this);
-
+		app.models.order.bind('showWide', this.show, this);
+		app.models.order.bind('hideWide', this.hide, this);
 	},
 
 	events:{
@@ -291,6 +295,16 @@ app.Core.ListWideTypes = Backbone.View.extend({
 
 		app.models.order.set(data);
 		app.cols.widePapers.fetch({data: data});
+	},
+
+	show: function(){
+		$("#wide-types").show();
+		$("#papers").hide();
+	},
+
+	hide: function(){
+		$("#wide-types").hide();
+		$("#papers").show();
 	},
 
 	toggle: function(){
@@ -328,6 +342,7 @@ app.Core.ListWidePapers = Backbone.View.extend({
 		$(this.el).html(this.template({
 			models: this.collection.toJSON()
 		}));
+		$("#wide-papers").slideDown();
 		return this
 	}
 });
@@ -341,7 +356,9 @@ app.Core.Main = Backbone.View.extend({
 	events: {
 		"click #send": "load", // Обработчик клика на кнопке "Проверить"
 		//"click #login-btn": "login", // Обработчик клика на кнопке "Проверить"
-		"keyup #time": "checkTime",
+		"keyup #time": "checkTime", //проверка на количество дней
+		"keyup #width": "checkWide",
+		"keyup #height": "checkWide",
 		"click #add_lamin": "load_lamin", //вывод ламинаций
 		"click #add_big": "load_big" //вывод биговок
 	},
@@ -392,7 +409,7 @@ app.Core.Main = Backbone.View.extend({
 
 	checkTime: function(e){
 		var $this = $(e.currentTarget),
-			val = $this.val();
+			val = parseFloat($this.val());
 
 		if (val>10){
 			e.preventDefault();
@@ -407,10 +424,15 @@ app.Core.Main = Backbone.View.extend({
 
 	checkWide: function(e){
 		var $this = $(e.currentTarget),
-			val = $this.val;
+			val = $this.val();
 
 		if (val>500){
-
+			app.log("going wide!");
+			app.models.order.trigger("showWide");
+		}
+		else{
+			app.log("back to normal");
+			app.models.order.trigger("hideWide");
 		}
 	},
 
@@ -505,7 +527,7 @@ app.Core.Result = Backbone.View.extend({
 
 
 	initialize: function(){
-		this.model.bind('change', 	this.render, this);
+		this.model.bind('change:order_cost', 	this.render, this);
 		this.model.bind('calc', 	this.calc, this);
 		this.model.bind('stats', 	this.stats, this);
 		this.model.bind('retype', 	this.retype, this);
@@ -557,11 +579,17 @@ app.Core.Result = Backbone.View.extend({
 
 		}
 		else{//Изделие больше А3
-			if ((width > a1.width) && (height > a1.height) &&(quant <= 100)){
+			app.models.order.set({"number_of_lists": quant});
+			if ((width > a1.width) && (height > a1.height)){//если изделие больше А1
 				app.models.order.set({type: "wide"}); //Уходим на широкоформтаку
 			}
-			else{
-				app.models.order.set({type: "offset"}); //Уходим на оффсет
+			else {
+				if (quant <= 100){ //если тираж меньше 100
+					app.models.order.set({type: "wide"}); //Уходим на широкоформтаку
+				}
+				else{
+					app.models.order.set({type: "offset"}); //Уходим на оффсет
+				}
 			}
 			app.models.order.trigger("calc");
 		}
@@ -635,7 +663,9 @@ app.Core.Result = Backbone.View.extend({
 	},
 
 	calc: function(){
-		var type = this.model.get("type");
+		var type = this.model.get("type"),
+			wideType = this.model.get("wide_type"),
+			widePaper = this.model.get("wpaper_name");
 		var that = this;
 		var senddata = {
 			"width": 			this.model.get("width"),
@@ -654,6 +684,8 @@ app.Core.Result = Backbone.View.extend({
 
 		if (senddata.add_lamin) _.extend(senddata,{"lamin_name": this.model.get("lamin_name")});
 		if (senddata.add_big) 	_.extend(senddata,{"big_count": this.model.get("big_count"), "big_align": this.model.get("big_align")});
+
+		if (_.isString(wideType)) _.extend(senddata,{"wide_type": wideType, "wpaper_name": widePaper});
 
 		//_.extend(senddata, {debug: true});
 
