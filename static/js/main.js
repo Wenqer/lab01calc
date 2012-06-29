@@ -383,7 +383,7 @@ app.Core.Main = Backbone.View.extend({
 		if (errors)
 			return false;
 
-		data["paper_label"] = $(this.el).find("option:selected").html();
+		data["paper_label"] = $(this.el).find("#papers option:selected").html();
 
 		app.log(data);
 		app.models.order.set(data);//пишем начлаьные данные в модель заказа
@@ -391,8 +391,8 @@ app.Core.Main = Backbone.View.extend({
 	},
 
 	checkTime: function(e){
-		var $this = $(e.currentTarget);
-		var val = $this.val();
+		var $this = $(e.currentTarget),
+			val = $this.val();
 
 		if (val>10){
 			e.preventDefault();
@@ -403,6 +403,15 @@ app.Core.Main = Backbone.View.extend({
 			$this.val(1);
 		}
 
+	},
+
+	checkWide: function(e){
+		var $this = $(e.currentTarget),
+			val = $this.val;
+
+		if (val>500){
+
+		}
 	},
 
 	/*login: function(e){
@@ -475,9 +484,9 @@ app.Core.Main = Backbone.View.extend({
 		this.papers 	= new app.Core.ListLamins ({el: this.$("#" + app.cols.papers.id),  collection: app.cols.papers});
 		this.formats 	= new app.Core.ListFormats({el: this.$("#" + app.cols.formats.id), collection: app.cols.formats});
 
-		/*this.wideTypes = new app.Core.ListWideTypes({el: this.$("#" + app.cols.wideTypes.id), collection: app.cols.wideTypes});
+		this.wideTypes = new app.Core.ListWideTypes({el: this.$("#" + app.cols.wideTypes.id), collection: app.cols.wideTypes});
 		this.widePapers = new app.Core.ListWidePapers({el: this.$("#" + app.cols.widePapers.id), collection: app.cols.widePapers});
-		*/
+
 		$(this.el).tooltip({
 			selector: "label[data-rel=tooltip]"
 		});
