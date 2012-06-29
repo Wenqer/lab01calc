@@ -180,7 +180,7 @@ class WideTypes(models.Model):
         verbose_name_plural = u'Качество печати'
 
     def __unicode__(self):
-        return self.wide_type_label
+        return self.wide_type
 
 class Papers_wide(models.Model):
     wpaper_name = models.CharField(max_length=50, help_text='кодовое имя материала латиницей (без пробелов)')
