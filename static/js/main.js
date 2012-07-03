@@ -358,7 +358,7 @@ app.Core.Main = Backbone.View.extend({
 	events: {
 		"click #send": "load", // Обработчик клика на кнопке "Проверить"
 		//"click #login-btn": "login", // Обработчик клика на кнопке "Проверить"
-		"keyup #time": "checkTime", //проверка на количество дней
+		//"keyup #time": "checkTime", //проверка на количество дней
 		"keyup #width": "checkWide",
 		"keyup #height": "checkWide",
 		"click #add_lamin": "load_lamin", //вывод ламинаций
@@ -414,6 +414,7 @@ app.Core.Main = Backbone.View.extend({
 		app.models.order.trigger("retype");//выясняем тип заказа
 	},
 
+	/*
 	checkTime: function(e){
 		var $this = $(e.currentTarget),
 			val = parseFloat($this.val());
@@ -428,6 +429,7 @@ app.Core.Main = Backbone.View.extend({
 		}
 
 	},
+	*/
 
 	checkWide: function(e){
 		var $this = $(e.currentTarget),
@@ -550,7 +552,7 @@ app.Core.Result = Backbone.View.extend({
 			add_print_area	= app.models.order.get("add_print_area"),
 			add_trim  		= app.models.order.get("add_trim"),
 			quant  			= app.models.order.get("quant"),
-			time   			= parseInt(app.models.order.get("time"));
+			time   			= app.models.order.get("time");
 		var a3={}; a3.width = 305; a3.height = 430;
 		var	a1={}; a1.width = 420; a1.height = 594;
 
@@ -573,7 +575,7 @@ app.Core.Result = Backbone.View.extend({
 						app.models.order.set({type: "digit"});// Уходим на цифровую печать
 					}
 					else{
-						if (time < 5){
+						if (time){
 							app.models.order.set({type: "digit"});// Уходим на цифровую печать
 						}
 						else{
