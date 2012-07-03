@@ -5,6 +5,7 @@ from django.db import models
 class Order(models.Model):
     date = models.CharField(max_length=30, help_text='дата заказа')
     email = models.EmailField(help_text='почта заказчика')
+    username = models.CharField(max_length=30, help_text='имя заказчика', blank=True)
     telephone = models.CharField(max_length=30, help_text = "телефон заказчика", blank=True)
     on_paper = models.IntegerField(help_text='изделий на листе')
     chroma = models.IntegerField(help_text='цветность 1+0 ето 10, 11 - 1+1 и т.д.')
@@ -30,6 +31,7 @@ class Order(models.Model):
     lamin_cost = models.FloatField(null=True, blank=True, help_text='стоимость ламинации')
     order_cost = models.FloatField(help_text='общая стоимость')
     layout = models.CharField(max_length=20000, blank=True)
+    comment = models.CharField(max_length=150, help_text='коментарий', blank=True)
 
     class Meta:
         verbose_name = u'Заказ'
@@ -142,6 +144,7 @@ class Constants(models.Model):
     k_offset = models.FloatField(help_text = 'коефициент накрутки на оффсете')
     trim_offset = models.FloatField(help_text = 'допуск на подрезку в оффсете')
     print_area_offset = models.FloatField(help_text = 'допуск на запечатку в оффсете')
+    k_wide = models.FloatField(help_text='коефициент накрутки на широкоформатку')
 
     class Meta:
         verbose_name = u'Константы'
