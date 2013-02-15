@@ -17,9 +17,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'lab01',                      # Or path to database file if using sqlite3.
-        'USER': 'lab01',                      # Not used with sqlite3.
-        'PASSWORD': 'projectlab01',                  # Not used with sqlite3.
+        'NAME': '',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -90,12 +90,12 @@ STATICFILES_FINDERS = (
 )
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2147483648
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'mynameis.rost@gmail.com'
-EMAIL_HOST_PASSWORD = 'tracymcgrady1'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'o*yw1zf1y(fgo7a0h=+me$tbzc^xj_hiqo*anxs7_v#!wb3ej)'
+SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
